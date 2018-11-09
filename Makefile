@@ -1,2 +1,11 @@
+REPO = github.com/lujjjh/gates-playground
+
+build:
+	gopherjs build $(REPO)
+
+.PHONY: build
+
 run:
-	gopherjs serve github.com/lujjjh/gates-playground
+	gopherjs serve $(REPO)
+
+.PHONY: run

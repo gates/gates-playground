@@ -6,7 +6,7 @@ import (
 	"github.com/lujjjh/gates"
 )
 
-var global = map[string]interface{}{
+var global = gates.Map{
 	"time": gates.FunctionFunc(func(fc gates.FunctionCall) gates.Value {
 		args := fc.Args()
 		layout := "X"
