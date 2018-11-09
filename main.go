@@ -6,21 +6,24 @@ import (
 	"github.com/lujjjh/gates"
 )
 
-var global = gates.Map{
-	"time": gates.FunctionFunc(func(fc gates.FunctionCall) gates.Value {
-		args := fc.Args()
-		layout := "X"
-		if len(args) > 0 {
-			layout = args[0].ToString()
-		}
-		return gates.String(moment.New().Format(layout))
-	}),
+func time(fc gates.FunctionCall) gates.Value {
+	args := fc.Args()
+	layout := "X"
+	if len(args) > 0 {
+		layout = args[0].ToString()
+	}
+	return gates.String(moment.New().Format(layout))
+}
+
+func registerGlobal(r *gates.Runtime) {
+	r.Global().InitBuiltIns()
+	r.Global().Set("time", gates.FunctionFunc(time))
 }
 
 func main() {
 	js.Global.Set("RunString", func(s string) *js.Object {
 		r := gates.New()
-		r.SetGlobal(global)
+		registerGlobal(r)
 		v, err := r.RunString(s)
 		if err != nil {
 			panic(err)
