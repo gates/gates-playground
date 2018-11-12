@@ -29751,7 +29751,7 @@ $packages["github.com/go-shadow/moment"] = (function() {
 	return $pkg;
 })();
 $packages["github.com/lujjjh/gates/syntax"] = (function() {
-	var $pkg = {}, $init, fmt, io, sort, strconv, sync, unicode, utf8, Error, ErrorList, Expr, expr, Ident, Lit, ArrayLit, MapLitEntry, MapLit, UnaryExpr, BinaryExpr, ParenExpr, SelectorExpr, IndexExpr, CallExpr, BadExpr, parser, bailout, Position, Pos, File, lineInfo, FileSet, ErrorHandler, Scanner, Token, sliceType, ptrType, sliceType$1, ptrType$1, sliceType$2, sliceType$3, ptrType$2, sliceType$4, sliceType$5, ptrType$3, sliceType$6, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, ptrType$9, funcType, ptrType$10, tokens, ParseExpr, searchLineInfos, NewFileSet, searchFiles, searchInts, isLetter, isDigit, digitVal;
+	var $pkg = {}, $init, fmt, io, sort, strconv, sync, unicode, utf8, Error, ErrorList, Expr, expr, Stmt, stmt, Ident, Lit, ArrayLit, MapLitEntry, MapLit, FunctionLit, UnaryExpr, BinaryExpr, ParenExpr, SelectorExpr, IndexExpr, CallExpr, ReturnStmt, BadExpr, BadStmt, ParameterList, FunctionBody, parser, bailout, Position, Pos, File, lineInfo, FileSet, ErrorHandler, Scanner, Token, sliceType, ptrType, sliceType$1, ptrType$1, sliceType$2, sliceType$3, ptrType$2, ptrType$3, ptrType$4, sliceType$4, sliceType$5, sliceType$6, sliceType$7, ptrType$5, sliceType$8, ptrType$6, ptrType$7, ptrType$8, ptrType$9, ptrType$10, ptrType$11, ptrType$12, funcType, ptrType$13, tokens, ParseExpr, searchLineInfos, NewFileSet, searchFiles, searchInts, isLetter, isDigit, digitVal;
 	fmt = $packages["fmt"];
 	io = $packages["io"];
 	sort = $packages["sort"];
@@ -29772,6 +29772,13 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 	ErrorList = $pkg.ErrorList = $newType(12, $kindSlice, "syntax.ErrorList", true, "github.com/lujjjh/gates/syntax", true, null);
 	Expr = $pkg.Expr = $newType(8, $kindInterface, "syntax.Expr", true, "github.com/lujjjh/gates/syntax", true, null);
 	expr = $pkg.expr = $newType(0, $kindStruct, "syntax.expr", true, "github.com/lujjjh/gates/syntax", false, function() {
+		this.$val = this;
+		if (arguments.length === 0) {
+			return;
+		}
+	});
+	Stmt = $pkg.Stmt = $newType(8, $kindInterface, "syntax.Stmt", true, "github.com/lujjjh/gates/syntax", true, null);
+	stmt = $pkg.stmt = $newType(0, $kindStruct, "syntax.stmt", true, "github.com/lujjjh/gates/syntax", false, function() {
 		this.$val = this;
 		if (arguments.length === 0) {
 			return;
@@ -29841,6 +29848,20 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 		this.Entries = Entries_;
 		this.Rbrace = Rbrace_;
 	});
+	FunctionLit = $pkg.FunctionLit = $newType(0, $kindStruct, "syntax.FunctionLit", true, "github.com/lujjjh/gates/syntax", true, function(expr_, Function_, ParameterList_, Body_) {
+		this.$val = this;
+		if (arguments.length === 0) {
+			this.expr = new expr.ptr();
+			this.Function = 0;
+			this.ParameterList = ptrType$2.nil;
+			this.Body = ptrType$3.nil;
+			return;
+		}
+		this.expr = expr_;
+		this.Function = Function_;
+		this.ParameterList = ParameterList_;
+		this.Body = Body_;
+	});
 	UnaryExpr = $pkg.UnaryExpr = $newType(0, $kindStruct, "syntax.UnaryExpr", true, "github.com/lujjjh/gates/syntax", true, function(expr_, OpPos_, Op_, X_) {
 		this.$val = this;
 		if (arguments.length === 0) {
@@ -29890,7 +29911,7 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 		if (arguments.length === 0) {
 			this.expr = new expr.ptr();
 			this.X = $ifaceNil;
-			this.Sel = ptrType$2.nil;
+			this.Sel = ptrType$4.nil;
 			return;
 		}
 		this.expr = expr_;
@@ -29929,6 +29950,18 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 		this.Args = Args_;
 		this.Rparen = Rparen_;
 	});
+	ReturnStmt = $pkg.ReturnStmt = $newType(0, $kindStruct, "syntax.ReturnStmt", true, "github.com/lujjjh/gates/syntax", true, function(stmt_, Return_, Result_) {
+		this.$val = this;
+		if (arguments.length === 0) {
+			this.stmt = new stmt.ptr();
+			this.Return = 0;
+			this.Result = $ifaceNil;
+			return;
+		}
+		this.stmt = stmt_;
+		this.Return = Return_;
+		this.Result = Result_;
+	});
 	BadExpr = $pkg.BadExpr = $newType(0, $kindStruct, "syntax.BadExpr", true, "github.com/lujjjh/gates/syntax", true, function(expr_, From_, To_) {
 		this.$val = this;
 		if (arguments.length === 0) {
@@ -29940,6 +29973,42 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 		this.expr = expr_;
 		this.From = From_;
 		this.To = To_;
+	});
+	BadStmt = $pkg.BadStmt = $newType(0, $kindStruct, "syntax.BadStmt", true, "github.com/lujjjh/gates/syntax", true, function(stmt_, From_, To_) {
+		this.$val = this;
+		if (arguments.length === 0) {
+			this.stmt = new stmt.ptr();
+			this.From = 0;
+			this.To = 0;
+			return;
+		}
+		this.stmt = stmt_;
+		this.From = From_;
+		this.To = To_;
+	});
+	ParameterList = $pkg.ParameterList = $newType(0, $kindStruct, "syntax.ParameterList", true, "github.com/lujjjh/gates/syntax", true, function(Lparen_, List_, Rparen_) {
+		this.$val = this;
+		if (arguments.length === 0) {
+			this.Lparen = 0;
+			this.List = sliceType$4.nil;
+			this.Rparen = 0;
+			return;
+		}
+		this.Lparen = Lparen_;
+		this.List = List_;
+		this.Rparen = Rparen_;
+	});
+	FunctionBody = $pkg.FunctionBody = $newType(0, $kindStruct, "syntax.FunctionBody", true, "github.com/lujjjh/gates/syntax", true, function(Lbrace_, StmtList_, Rbrace_) {
+		this.$val = this;
+		if (arguments.length === 0) {
+			this.Lbrace = 0;
+			this.StmtList = sliceType$5.nil;
+			this.Rbrace = 0;
+			return;
+		}
+		this.Lbrace = Lbrace_;
+		this.StmtList = StmtList_;
+		this.Rbrace = Rbrace_;
 	});
 	parser = $pkg.parser = $newType(0, $kindStruct, "syntax.parser", true, "github.com/lujjjh/gates/syntax", false, function(file_, errors_, scanner_, pos_, tok_, lit_) {
 		this.$val = this;
@@ -29983,13 +30052,13 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 	File = $pkg.File = $newType(0, $kindStruct, "syntax.File", true, "github.com/lujjjh/gates/syntax", true, function(set_, name_, base_, size_, mutex_, lines_, infos_) {
 		this.$val = this;
 		if (arguments.length === 0) {
-			this.set = ptrType$3.nil;
+			this.set = ptrType$5.nil;
 			this.name = "";
 			this.base = 0;
 			this.size = 0;
 			this.mutex = new sync.Mutex.ptr(0, 0);
-			this.lines = sliceType$4.nil;
-			this.infos = sliceType$6.nil;
+			this.lines = sliceType$6.nil;
+			this.infos = sliceType$8.nil;
 			return;
 		}
 		this.set = set_;
@@ -30019,7 +30088,7 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 		if (arguments.length === 0) {
 			this.mutex = new sync.RWMutex.ptr(new sync.Mutex.ptr(0, 0), 0, 0, 0, 0);
 			this.base = 0;
-			this.files = sliceType$5.nil;
+			this.files = sliceType$7.nil;
 			this.last = ptrType.nil;
 			return;
 		}
@@ -30058,19 +30127,24 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 	ptrType$1 = $ptrType(ErrorList);
 	sliceType$2 = $sliceType(Expr);
 	sliceType$3 = $sliceType(MapLitEntry);
-	ptrType$2 = $ptrType(Ident);
-	sliceType$4 = $sliceType($Int);
-	sliceType$5 = $sliceType(ptrType);
-	ptrType$3 = $ptrType(FileSet);
-	sliceType$6 = $sliceType(lineInfo);
-	ptrType$4 = $ptrType(Error);
-	ptrType$5 = $ptrType(ArrayLit);
-	ptrType$6 = $ptrType(MapLit);
-	ptrType$7 = $ptrType(CallExpr);
-	ptrType$8 = $ptrType(parser);
-	ptrType$9 = $ptrType(Position);
+	ptrType$2 = $ptrType(ParameterList);
+	ptrType$3 = $ptrType(FunctionBody);
+	ptrType$4 = $ptrType(Ident);
+	sliceType$4 = $sliceType(ptrType$4);
+	sliceType$5 = $sliceType(Stmt);
+	sliceType$6 = $sliceType($Int);
+	sliceType$7 = $sliceType(ptrType);
+	ptrType$5 = $ptrType(FileSet);
+	sliceType$8 = $sliceType(lineInfo);
+	ptrType$6 = $ptrType(Error);
+	ptrType$7 = $ptrType(ArrayLit);
+	ptrType$8 = $ptrType(MapLit);
+	ptrType$9 = $ptrType(FunctionLit);
+	ptrType$10 = $ptrType(CallExpr);
+	ptrType$11 = $ptrType(parser);
+	ptrType$12 = $ptrType(Position);
 	funcType = $funcType([ptrType], [$Bool], false);
-	ptrType$10 = $ptrType(Scanner);
+	ptrType$13 = $ptrType(Scanner);
 	Error.ptr.prototype.Error = function() {
 		var _r, e, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; e = $f.e; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
@@ -30337,23 +30411,23 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 		var _r, _r$1, _r$2, elem, elemList, lbrack, p, rbrack, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; elem = $f.elem; elemList = $f.elemList; lbrack = $f.lbrack; p = $f.p; rbrack = $f.rbrack; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		p = this;
-		_r = p.expect(30); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r = p.expect(32); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		lbrack = _r;
 		elemList = sliceType$2.nil;
-		/* */ if (!((p.tok === 35))) { $s = 2; continue; }
+		/* */ if (!((p.tok === 37))) { $s = 2; continue; }
 		/* */ $s = 3; continue;
-		/* if (!((p.tok === 35))) { */ case 2:
+		/* if (!((p.tok === 37))) { */ case 2:
 			/* while (true) { */ case 4:
 				_r$1 = p.parseExpr(); /* */ $s = 6; case 6: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 				elem = _r$1;
 				elemList = $append(elemList, elem);
-				if (!((p.tok === 32))) {
+				if (!((p.tok === 34))) {
 					/* break; */ $s = 5; continue;
 				}
 				$r = p.next(); /* */ $s = 7; case 7: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 			/* } */ $s = 4; continue; case 5:
 		/* } */ case 3:
-		_r$2 = p.expect(35); /* */ $s = 8; case 8: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		_r$2 = p.expect(37); /* */ $s = 8; case 8: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
 		rbrack = _r$2;
 		$s = -1; return new ArrayLit.ptr(new expr.ptr(), lbrack, elemList, rbrack);
 		/* */ } return; } if ($f === undefined) { $f = { $blk: parser.ptr.prototype.parseArrayLit }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f.elem = elem; $f.elemList = elemList; $f.lbrack = lbrack; $f.p = p; $f.rbrack = rbrack; $f.$s = $s; $f.$r = $r; return $f;
@@ -30363,22 +30437,22 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 		var _r, _r$1, _r$2, _r$3, _r$4, _r$5, _r$6, _r$7, entries, ident, key, lbrace, p, rbrace, value, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _r$7 = $f._r$7; entries = $f.entries; ident = $f.ident; key = $f.key; lbrace = $f.lbrace; p = $f.p; rbrace = $f.rbrace; value = $f.value; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		p = this;
-		_r = p.expect(31); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r = p.expect(33); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		lbrace = _r;
 		entries = sliceType$3.nil;
-		/* */ if (!((p.tok === 36))) { $s = 2; continue; }
+		/* */ if (!((p.tok === 38))) { $s = 2; continue; }
 		/* */ $s = 3; continue;
-		/* if (!((p.tok === 36))) { */ case 2:
+		/* if (!((p.tok === 38))) { */ case 2:
 			/* while (true) { */ case 4:
 				key = $ifaceNil;
-				/* */ if (p.tok === 30) { $s = 6; continue; }
+				/* */ if (p.tok === 32) { $s = 6; continue; }
 				/* */ if (p.tok === 3) { $s = 7; continue; }
 				/* */ $s = 8; continue;
-				/* if (p.tok === 30) { */ case 6:
+				/* if (p.tok === 32) { */ case 6:
 					$r = p.next(); /* */ $s = 10; case 10: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 					_r$1 = p.parseExpr(); /* */ $s = 11; case 11: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 					key = _r$1;
-					_r$2 = p.expect(35); /* */ $s = 12; case 12: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+					_r$2 = p.expect(37); /* */ $s = 12; case 12: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
 					_r$2;
 					$s = 9; continue;
 				/* } else if (p.tok === 3) { */ case 7:
@@ -30390,62 +30464,120 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 					_r$4 = p.parseOperand(); /* */ $s = 14; case 14: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
 					key = _r$4;
 				/* } */ case 9:
-				_r$5 = p.expect(38); /* */ $s = 15; case 15: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
+				_r$5 = p.expect(40); /* */ $s = 15; case 15: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
 				_r$5;
 				_r$6 = p.parseExpr(); /* */ $s = 16; case 16: if($c) { $c = false; _r$6 = _r$6.$blk(); } if (_r$6 && _r$6.$blk !== undefined) { break s; }
 				value = _r$6;
 				entries = $append(entries, new MapLitEntry.ptr(key, value));
-				if (!((p.tok === 32))) {
+				if (!((p.tok === 34))) {
 					/* break; */ $s = 5; continue;
 				}
 				$r = p.next(); /* */ $s = 17; case 17: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 			/* } */ $s = 4; continue; case 5:
 		/* } */ case 3:
-		_r$7 = p.expect(36); /* */ $s = 18; case 18: if($c) { $c = false; _r$7 = _r$7.$blk(); } if (_r$7 && _r$7.$blk !== undefined) { break s; }
+		_r$7 = p.expect(38); /* */ $s = 18; case 18: if($c) { $c = false; _r$7 = _r$7.$blk(); } if (_r$7 && _r$7.$blk !== undefined) { break s; }
 		rbrace = _r$7;
 		$s = -1; return new MapLit.ptr(new expr.ptr(), lbrace, entries, rbrace);
 		/* */ } return; } if ($f === undefined) { $f = { $blk: parser.ptr.prototype.parseMapLit }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._r$7 = _r$7; $f.entries = entries; $f.ident = ident; $f.key = key; $f.lbrace = lbrace; $f.p = p; $f.rbrace = rbrace; $f.value = value; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	parser.prototype.parseMapLit = function() { return this.$val.parseMapLit(); };
+	parser.ptr.prototype.parseFunction = function() {
+		var _r, _r$1, _r$2, body, function$1, p, parameterList, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; body = $f.body; function$1 = $f.function$1; p = $f.p; parameterList = $f.parameterList; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		_r = p.expect(8); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		function$1 = _r;
+		_r$1 = p.parseFunctionParameterList(); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+		parameterList = _r$1;
+		_r$2 = p.parseFunctionBody(); /* */ $s = 3; case 3: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		body = _r$2;
+		$s = -1; return new FunctionLit.ptr(new expr.ptr(), function$1, parameterList, body);
+		/* */ } return; } if ($f === undefined) { $f = { $blk: parser.ptr.prototype.parseFunction }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f.body = body; $f.function$1 = function$1; $f.p = p; $f.parameterList = parameterList; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	parser.prototype.parseFunction = function() { return this.$val.parseFunction(); };
+	parser.ptr.prototype.parseFunctionParameterList = function() {
+		var _r, _r$1, _r$2, ident, list, lparen, p, rparen, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; ident = $f.ident; list = $f.list; lparen = $f.lparen; p = $f.p; rparen = $f.rparen; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		_r = p.expect(31); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		lparen = _r;
+		list = sliceType$4.nil;
+		/* */ if (!((p.tok === 36))) { $s = 2; continue; }
+		/* */ $s = 3; continue;
+		/* if (!((p.tok === 36))) { */ case 2:
+			/* while (true) { */ case 4:
+				_r$1 = p.parseIdent(); /* */ $s = 6; case 6: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+				ident = _r$1;
+				list = $append(list, ident);
+				if (!((p.tok === 34))) {
+					/* break; */ $s = 5; continue;
+				}
+				$r = p.next(); /* */ $s = 7; case 7: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			/* } */ $s = 4; continue; case 5:
+		/* } */ case 3:
+		_r$2 = p.expect(36); /* */ $s = 8; case 8: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		rparen = _r$2;
+		$s = -1; return new ParameterList.ptr(lparen, list, rparen);
+		/* */ } return; } if ($f === undefined) { $f = { $blk: parser.ptr.prototype.parseFunctionParameterList }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f.ident = ident; $f.list = list; $f.lparen = lparen; $f.p = p; $f.rparen = rparen; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	parser.prototype.parseFunctionParameterList = function() { return this.$val.parseFunctionParameterList(); };
+	parser.ptr.prototype.parseFunctionBody = function() {
+		var _r, _r$1, _r$2, lbrace, p, rbrace, stmtList, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; lbrace = $f.lbrace; p = $f.p; rbrace = $f.rbrace; stmtList = $f.stmtList; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		_r = p.expect(33); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		lbrace = _r;
+		_r$1 = p.parseStmtList(); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+		stmtList = _r$1;
+		_r$2 = p.expect(38); /* */ $s = 3; case 3: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		rbrace = _r$2;
+		$s = -1; return new FunctionBody.ptr(lbrace, stmtList, rbrace);
+		/* */ } return; } if ($f === undefined) { $f = { $blk: parser.ptr.prototype.parseFunctionBody }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f.lbrace = lbrace; $f.p = p; $f.rbrace = rbrace; $f.stmtList = stmtList; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	parser.prototype.parseFunctionBody = function() { return this.$val.parseFunctionBody(); };
 	parser.ptr.prototype.parseOperand = function() {
-		var _1, _r, _r$1, _r$2, _r$3, _r$4, lparen, p, pos, rparen, x, x$1, x$2, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _1 = $f._1; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; lparen = $f.lparen; p = $f.p; pos = $f.pos; rparen = $f.rparen; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var _1, _r, _r$1, _r$2, _r$3, _r$4, _r$5, lparen, p, pos, rparen, x, x$1, x$2, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _1 = $f._1; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; lparen = $f.lparen; p = $f.p; pos = $f.pos; rparen = $f.rparen; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		p = this;
 			_1 = p.tok;
 			/* */ if (_1 === (3)) { $s = 2; continue; }
 			/* */ if ((_1 === (4)) || (_1 === (5)) || (_1 === (6)) || (_1 === (7))) { $s = 3; continue; }
-			/* */ if (_1 === (29)) { $s = 4; continue; }
-			/* */ if (_1 === (30)) { $s = 5; continue; }
-			/* */ if (_1 === (31)) { $s = 6; continue; }
-			/* */ $s = 7; continue;
+			/* */ if (_1 === (31)) { $s = 4; continue; }
+			/* */ if (_1 === (32)) { $s = 5; continue; }
+			/* */ if (_1 === (33)) { $s = 6; continue; }
+			/* */ if (_1 === (8)) { $s = 7; continue; }
+			/* */ $s = 8; continue;
 			/* if (_1 === (3)) { */ case 2:
-				_r = p.parseIdent(); /* */ $s = 8; case 8: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+				_r = p.parseIdent(); /* */ $s = 9; case 9: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 				x = _r;
 				$s = -1; return x;
 			/* } else if ((_1 === (4)) || (_1 === (5)) || (_1 === (6)) || (_1 === (7))) { */ case 3:
 				x$1 = new Lit.ptr(new expr.ptr(), p.pos, p.tok, p.lit);
-				$r = p.next(); /* */ $s = 9; case 9: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-				$s = -1; return x$1;
-			/* } else if (_1 === (29)) { */ case 4:
-				lparen = p.pos;
 				$r = p.next(); /* */ $s = 10; case 10: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-				_r$1 = p.parseExpr(); /* */ $s = 11; case 11: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+				$s = -1; return x$1;
+			/* } else if (_1 === (31)) { */ case 4:
+				lparen = p.pos;
+				$r = p.next(); /* */ $s = 11; case 11: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+				_r$1 = p.parseExpr(); /* */ $s = 12; case 12: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 				x$2 = _r$1;
-				_r$2 = p.expect(34); /* */ $s = 12; case 12: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+				_r$2 = p.expect(36); /* */ $s = 13; case 13: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
 				rparen = _r$2;
 				$s = -1; return new ParenExpr.ptr(new expr.ptr(), lparen, x$2, rparen);
-			/* } else if (_1 === (30)) { */ case 5:
-				_r$3 = p.parseArrayLit(); /* */ $s = 13; case 13: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+			/* } else if (_1 === (32)) { */ case 5:
+				_r$3 = p.parseArrayLit(); /* */ $s = 14; case 14: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
 				$s = -1; return _r$3;
-			/* } else if (_1 === (31)) { */ case 6:
-				_r$4 = p.parseMapLit(); /* */ $s = 14; case 14: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
+			/* } else if (_1 === (33)) { */ case 6:
+				_r$4 = p.parseMapLit(); /* */ $s = 15; case 15: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
 				$s = -1; return _r$4;
-			/* } */ case 7:
+			/* } else if (_1 === (8)) { */ case 7:
+				_r$5 = p.parseFunction(); /* */ $s = 16; case 16: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
+				$s = -1; return _r$5;
+			/* } */ case 8:
 		case 1:
 		pos = p.pos;
-		$r = p.errorExpected(pos, "operand"); /* */ $s = 15; case 15: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = p.errorExpected(pos, "operand"); /* */ $s = 17; case 17: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$s = -1; return new BadExpr.ptr(new expr.ptr(), pos, p.pos);
-		/* */ } return; } if ($f === undefined) { $f = { $blk: parser.ptr.prototype.parseOperand }; } $f._1 = _1; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f.lparen = lparen; $f.p = p; $f.pos = pos; $f.rparen = rparen; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: parser.ptr.prototype.parseOperand }; } $f._1 = _1; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f.lparen = lparen; $f.p = p; $f.pos = pos; $f.rparen = rparen; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	parser.prototype.parseOperand = function() { return this.$val.parseOperand(); };
 	parser.ptr.prototype.parseSelector = function(x) {
@@ -30462,11 +30594,11 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 		var _r, _r$1, _r$2, index, lbrack, p, rbrack, x, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; index = $f.index; lbrack = $f.lbrack; p = $f.p; rbrack = $f.rbrack; x = $f.x; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		p = this;
-		_r = p.expect(30); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r = p.expect(32); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		lbrack = _r;
 		_r$1 = p.parseExpr(); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 		index = _r$1;
-		_r$2 = p.expect(35); /* */ $s = 3; case 3: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		_r$2 = p.expect(37); /* */ $s = 3; case 3: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
 		rbrack = _r$2;
 		$s = -1; return new IndexExpr.ptr(new expr.ptr(), x, lbrack, index, rbrack);
 		/* */ } return; } if ($f === undefined) { $f = { $blk: parser.ptr.prototype.parseIndex }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f.index = index; $f.lbrack = lbrack; $f.p = p; $f.rbrack = rbrack; $f.x = x; $f.$s = $s; $f.$r = $r; return $f;
@@ -30476,21 +30608,21 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 		var _r, _r$1, _r$2, _r$3, fun, list, lparen, p, rparen, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; fun = $f.fun; list = $f.list; lparen = $f.lparen; p = $f.p; rparen = $f.rparen; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		p = this;
-		_r = p.expect(29); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r = p.expect(31); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		lparen = _r;
 		list = sliceType$2.nil;
 		/* while (true) { */ case 2:
-			/* if (!(!((p.tok === 34)) && !((p.tok === 1)))) { break; } */ if(!(!((p.tok === 34)) && !((p.tok === 1)))) { $s = 3; continue; }
+			/* if (!(!((p.tok === 36)) && !((p.tok === 1)))) { break; } */ if(!(!((p.tok === 36)) && !((p.tok === 1)))) { $s = 3; continue; }
 			_r$1 = p.parseExpr(); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 			list = $append(list, _r$1);
-			/* */ if (!((p.tok === 34))) { $s = 5; continue; }
+			/* */ if (!((p.tok === 36))) { $s = 5; continue; }
 			/* */ $s = 6; continue;
-			/* if (!((p.tok === 34))) { */ case 5:
-				_r$2 = p.expect(32); /* */ $s = 7; case 7: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+			/* if (!((p.tok === 36))) { */ case 5:
+				_r$2 = p.expect(34); /* */ $s = 7; case 7: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
 				_r$2;
 			/* } */ case 6:
 		/* } */ $s = 2; continue; case 3:
-		_r$3 = p.expect(34); /* */ $s = 8; case 8: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+		_r$3 = p.expect(36); /* */ $s = 8; case 8: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
 		rparen = _r$3;
 		$s = -1; return new CallExpr.ptr(new expr.ptr(), fun, lparen, list, rparen);
 		/* */ } return; } if ($f === undefined) { $f = { $blk: parser.ptr.prototype.parseCall }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f.fun = fun; $f.list = list; $f.lparen = lparen; $f.p = p; $f.rparen = rparen; $f.$s = $s; $f.$r = $r; return $f;
@@ -30504,11 +30636,11 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 		x = _r;
 		/* while (true) { */ case 2:
 				_1 = p.tok;
-				/* */ if (_1 === (33)) { $s = 5; continue; }
-				/* */ if (_1 === (30)) { $s = 6; continue; }
-				/* */ if (_1 === (29)) { $s = 7; continue; }
+				/* */ if (_1 === (35)) { $s = 5; continue; }
+				/* */ if (_1 === (32)) { $s = 6; continue; }
+				/* */ if (_1 === (31)) { $s = 7; continue; }
 				/* */ $s = 8; continue;
-				/* if (_1 === (33)) { */ case 5:
+				/* if (_1 === (35)) { */ case 5:
 					$r = p.next(); /* */ $s = 10; case 10: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 					/* */ if (p.tok === 3) { $s = 11; continue; }
 					/* */ $s = 12; continue;
@@ -30521,11 +30653,11 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 						$r = p.next(); /* */ $s = 16; case 16: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 					/* } */ case 13:
 					$s = 9; continue;
-				/* } else if (_1 === (30)) { */ case 6:
+				/* } else if (_1 === (32)) { */ case 6:
 					_r$2 = p.parseIndex(x); /* */ $s = 17; case 17: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
 					x = _r$2;
 					$s = 9; continue;
-				/* } else if (_1 === (29)) { */ case 7:
+				/* } else if (_1 === (31)) { */ case 7:
 					_r$3 = p.parseCall(x); /* */ $s = 18; case 18: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
 					x = _r$3;
 					$s = 9; continue;
@@ -30543,9 +30675,9 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _1 = $f._1; _r = $f._r; _r$1 = $f._r$1; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; op = $f.op; p = $f.p; pos = $f.pos; x = $f.x; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		p = this;
 			_1 = p.tok;
-			/* */ if ((_1 === (10)) || (_1 === (11)) || (_1 === (25))) { $s = 2; continue; }
+			/* */ if ((_1 === (12)) || (_1 === (13)) || (_1 === (27))) { $s = 2; continue; }
 			/* */ $s = 3; continue;
-			/* if ((_1 === (10)) || (_1 === (11)) || (_1 === (25))) { */ case 2:
+			/* if ((_1 === (12)) || (_1 === (13)) || (_1 === (27))) { */ case 2:
 				_tmp = p.pos;
 				_tmp$1 = p.tok;
 				pos = _tmp;
@@ -30600,6 +30732,60 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: parser.ptr.prototype.parseExpr }; } $f._r = _r; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	parser.prototype.parseExpr = function() { return this.$val.parseExpr(); };
+	parser.ptr.prototype.parseReturnStmt = function() {
+		var _r, _r$1, _r$2, p, pos, result, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; p = $f.p; pos = $f.pos; result = $f.result; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		_r = p.expect(9); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		pos = _r;
+		result = $ifaceNil;
+		/* */ if (!((p.tok === 39))) { $s = 2; continue; }
+		/* */ $s = 3; continue;
+		/* if (!((p.tok === 39))) { */ case 2:
+			_r$1 = p.parseExpr(); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+			result = _r$1;
+		/* } */ case 3:
+		_r$2 = p.expect(39); /* */ $s = 5; case 5: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		_r$2;
+		$s = -1; return new ReturnStmt.ptr(new stmt.ptr(), pos, result);
+		/* */ } return; } if ($f === undefined) { $f = { $blk: parser.ptr.prototype.parseReturnStmt }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f.p = p; $f.pos = pos; $f.result = result; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	parser.prototype.parseReturnStmt = function() { return this.$val.parseReturnStmt(); };
+	parser.ptr.prototype.parseStmt = function() {
+		var _1, _r, p, pos, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _1 = $f._1; _r = $f._r; p = $f.p; pos = $f.pos; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+			_1 = p.tok;
+			/* */ if (_1 === (9)) { $s = 2; continue; }
+			/* */ $s = 3; continue;
+			/* if (_1 === (9)) { */ case 2:
+				_r = p.parseReturnStmt(); /* */ $s = 5; case 5: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+				$s = -1; return _r;
+			/* } else { */ case 3:
+				pos = p.pos;
+				$r = p.errorExpected(pos, "statement"); /* */ $s = 6; case 6: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+				$r = p.next(); /* */ $s = 7; case 7: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+				$s = -1; return new BadStmt.ptr(new stmt.ptr(), pos, p.pos);
+			/* } */ case 4:
+		case 1:
+		$s = -1; return $ifaceNil;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: parser.ptr.prototype.parseStmt }; } $f._1 = _1; $f._r = _r; $f.p = p; $f.pos = pos; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	parser.prototype.parseStmt = function() { return this.$val.parseStmt(); };
+	parser.ptr.prototype.parseStmtList = function() {
+		var _r, list, p, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; list = $f.list; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		list = sliceType$5.nil;
+		p = this;
+		/* while (true) { */ case 1:
+			/* if (!(!((p.tok === 38)) && !((p.tok === 1)))) { break; } */ if(!(!((p.tok === 38)) && !((p.tok === 1)))) { $s = 2; continue; }
+			_r = p.parseStmt(); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+			list = $append(list, _r);
+		/* } */ $s = 1; continue; case 2:
+		$s = -1; return list;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: parser.ptr.prototype.parseStmtList }; } $f._r = _r; $f.list = list; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	parser.prototype.parseStmtList = function() { return this.$val.parseStmtList(); };
 	Position.ptr.prototype.IsValid = function() {
 		var pos;
 		pos = this;
@@ -30727,7 +30913,7 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 		var _i, _ref, b, content, f, line, lines, offset, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _ref = $f._ref; b = $f.b; content = $f.content; f = $f.f; line = $f.line; lines = $f.lines; offset = $f.offset; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		f = this;
-		lines = sliceType$4.nil;
+		lines = sliceType$6.nil;
 		line = 0;
 		_ref = content;
 		_i = 0;
@@ -30900,7 +31086,7 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 	};
 	File.prototype.Position = function(p) { return this.$val.Position(p); };
 	NewFileSet = function() {
-		return new FileSet.ptr(new sync.RWMutex.ptr(new sync.Mutex.ptr(0, 0), 0, 0, 0, 0), 1, sliceType$5.nil, ptrType.nil);
+		return new FileSet.ptr(new sync.RWMutex.ptr(new sync.Mutex.ptr(0, 0), 0, 0, 0, 0), 1, sliceType$7.nil, ptrType.nil);
 	};
 	$pkg.NewFileSet = NewFileSet;
 	FileSet.ptr.prototype.Base = function() {
@@ -30926,7 +31112,7 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 		if (base < s.base || size < 0) {
 			$panic(new $String("illegal base or size"));
 		}
-		f = new File.ptr(s, filename, base, size, new sync.Mutex.ptr(0, 0), new sliceType$4([0]), sliceType$6.nil);
+		f = new File.ptr(s, filename, base, size, new sync.Mutex.ptr(0, 0), new sliceType$6([0]), sliceType$8.nil);
 		base = base + ((size + 1 >> 0)) >> 0;
 		if (base < 0) {
 			$panic(new $String("token.Pos offset overflow (> 2G of source code in file set)"));
@@ -31480,6 +31666,10 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 					tok = 6;
 				} else if (_1 === ("null")) {
 					tok = 7;
+				} else if (_1 === ("function")) {
+					tok = 8;
+				} else if (_1 === ("return")) {
+					tok = 9;
 				}
 				$s = 6; continue;
 			/* } else if (48 <= ch && ch <= 57) { */ case 4:
@@ -31524,7 +31714,7 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 						lit = _r$2;
 						$s = 36; continue;
 					/* } else if (_2 === (58)) { */ case 13:
-						tok = 38;
+						tok = 40;
 						$s = 36; continue;
 					/* } else if (_2 === (46)) { */ case 14:
 						/* */ if (48 <= s.ch && s.ch <= 57) { $s = 38; continue; }
@@ -31535,58 +31725,58 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 							lit = _r$3;
 							$s = 40; continue;
 						/* } else { */ case 39:
-							tok = 33;
+							tok = 35;
 						/* } */ case 40:
 						$s = 36; continue;
 					/* } else if (_2 === (44)) { */ case 15:
-						tok = 32;
+						tok = 34;
 						$s = 36; continue;
 					/* } else if (_2 === (59)) { */ case 16:
-						tok = 37;
+						tok = 39;
 						lit = ";";
 						$s = 36; continue;
 					/* } else if (_2 === (40)) { */ case 17:
-						tok = 29;
-						$s = 36; continue;
-					/* } else if (_2 === (41)) { */ case 18:
-						tok = 34;
-						$s = 36; continue;
-					/* } else if (_2 === (91)) { */ case 19:
-						tok = 30;
-						$s = 36; continue;
-					/* } else if (_2 === (93)) { */ case 20:
-						tok = 35;
-						$s = 36; continue;
-					/* } else if (_2 === (123)) { */ case 21:
 						tok = 31;
 						$s = 36; continue;
-					/* } else if (_2 === (125)) { */ case 22:
+					/* } else if (_2 === (41)) { */ case 18:
 						tok = 36;
 						$s = 36; continue;
+					/* } else if (_2 === (91)) { */ case 19:
+						tok = 32;
+						$s = 36; continue;
+					/* } else if (_2 === (93)) { */ case 20:
+						tok = 37;
+						$s = 36; continue;
+					/* } else if (_2 === (123)) { */ case 21:
+						tok = 33;
+						$s = 36; continue;
+					/* } else if (_2 === (125)) { */ case 22:
+						tok = 38;
+						$s = 36; continue;
 					/* } else if (_2 === (43)) { */ case 23:
-						tok = 10;
-						$s = 36; continue;
-					/* } else if (_2 === (45)) { */ case 24:
-						tok = 11;
-						$s = 36; continue;
-					/* } else if (_2 === (42)) { */ case 25:
 						tok = 12;
 						$s = 36; continue;
-					/* } else if (_2 === (47)) { */ case 26:
+					/* } else if (_2 === (45)) { */ case 24:
 						tok = 13;
 						$s = 36; continue;
-					/* } else if (_2 === (37)) { */ case 27:
+					/* } else if (_2 === (42)) { */ case 25:
 						tok = 14;
 						$s = 36; continue;
+					/* } else if (_2 === (47)) { */ case 26:
+						tok = 15;
+						$s = 36; continue;
+					/* } else if (_2 === (37)) { */ case 27:
+						tok = 16;
+						$s = 36; continue;
 					/* } else if (_2 === (94)) { */ case 28:
-						tok = 17;
+						tok = 19;
 						$s = 36; continue;
 					/* } else if (_2 === (60)) { */ case 29:
-						_r$4 = s.switch3(23, 27, 60, 18); /* */ $s = 42; case 42: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
+						_r$4 = s.switch3(25, 29, 60, 20); /* */ $s = 42; case 42: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
 						tok = _r$4;
 						$s = 36; continue;
 					/* } else if (_2 === (62)) { */ case 30:
-						_r$5 = s.switch3(24, 28, 62, 19); /* */ $s = 43; case 43: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
+						_r$5 = s.switch3(26, 30, 62, 21); /* */ $s = 43; case 43: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
 						tok = _r$5;
 						$s = 36; continue;
 					/* } else if (_2 === (61)) { */ case 31:
@@ -31594,19 +31784,19 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 						/* */ $s = 45; continue;
 						/* if (s.ch === 61) { */ case 44:
 							$r = s.next(); /* */ $s = 46; case 46: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-							tok = 22;
+							tok = 24;
 						/* } */ case 45:
 						$s = 36; continue;
 					/* } else if (_2 === (33)) { */ case 32:
-						_r$6 = s.switch2(25, 26); /* */ $s = 47; case 47: if($c) { $c = false; _r$6 = _r$6.$blk(); } if (_r$6 && _r$6.$blk !== undefined) { break s; }
+						_r$6 = s.switch2(27, 28); /* */ $s = 47; case 47: if($c) { $c = false; _r$6 = _r$6.$blk(); } if (_r$6 && _r$6.$blk !== undefined) { break s; }
 						tok = _r$6;
 						$s = 36; continue;
 					/* } else if (_2 === (38)) { */ case 33:
-						_r$7 = s.switch3(15, 0, 38, 20); /* */ $s = 48; case 48: if($c) { $c = false; _r$7 = _r$7.$blk(); } if (_r$7 && _r$7.$blk !== undefined) { break s; }
+						_r$7 = s.switch3(17, 0, 38, 22); /* */ $s = 48; case 48: if($c) { $c = false; _r$7 = _r$7.$blk(); } if (_r$7 && _r$7.$blk !== undefined) { break s; }
 						tok = _r$7;
 						$s = 36; continue;
 					/* } else if (_2 === (124)) { */ case 34:
-						_r$8 = s.switch3(16, 0, 124, 21); /* */ $s = 49; case 49: if($c) { $c = false; _r$8 = _r$8.$blk(); } if (_r$8 && _r$8.$blk !== undefined) { break s; }
+						_r$8 = s.switch3(18, 0, 124, 23); /* */ $s = 49; case 49: if($c) { $c = false; _r$8 = _r$8.$blk(); } if (_r$8 && _r$8.$blk !== undefined) { break s; }
 						tok = _r$8;
 						$s = 36; continue;
 					/* } else { */ case 35:
@@ -31624,7 +31814,7 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 		var s, tok;
 		tok = this.$val;
 		s = "";
-		if (0 <= tok && tok < 39) {
+		if (0 <= tok && tok < 41) {
 			s = ((tok < 0 || tok >= tokens.length) ? ($throwRuntimeError("index out of range"), undefined) : tokens[tok]);
 		}
 		if (s === "") {
@@ -31637,15 +31827,15 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 		var _1, op;
 		op = this.$val;
 		_1 = op;
-		if (_1 === (21)) {
+		if (_1 === (23)) {
 			return 1;
-		} else if (_1 === (20)) {
+		} else if (_1 === (22)) {
 			return 2;
-		} else if ((_1 === (22)) || (_1 === (26)) || (_1 === (23)) || (_1 === (27)) || (_1 === (24)) || (_1 === (28))) {
+		} else if ((_1 === (24)) || (_1 === (28)) || (_1 === (25)) || (_1 === (29)) || (_1 === (26)) || (_1 === (30))) {
 			return 3;
-		} else if ((_1 === (10)) || (_1 === (11)) || (_1 === (16)) || (_1 === (17))) {
+		} else if ((_1 === (12)) || (_1 === (13)) || (_1 === (18)) || (_1 === (19))) {
 			return 4;
-		} else if ((_1 === (12)) || (_1 === (13)) || (_1 === (14)) || (_1 === (18)) || (_1 === (19)) || (_1 === (15))) {
+		} else if ((_1 === (14)) || (_1 === (15)) || (_1 === (16)) || (_1 === (20)) || (_1 === (21)) || (_1 === (17))) {
 			return 5;
 		}
 		return 0;
@@ -31654,49 +31844,57 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 	Token.prototype.IsLiteral = function() {
 		var tok;
 		tok = this.$val;
-		return 2 < tok && tok < 8;
+		return 2 < tok && tok < 10;
 	};
 	$ptrType(Token).prototype.IsLiteral = function() { return new Token(this.$get()).IsLiteral(); };
 	Token.prototype.IsOperator = function() {
 		var tok;
 		tok = this.$val;
-		return 9 < tok && tok < 39;
+		return 11 < tok && tok < 41;
 	};
 	$ptrType(Token).prototype.IsOperator = function() { return new Token(this.$get()).IsOperator(); };
 	Error.methods = [{prop: "Error", name: "Error", pkg: "", typ: $funcType([], [$String], false)}];
 	ErrorList.methods = [{prop: "Len", name: "Len", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Swap", name: "Swap", pkg: "", typ: $funcType([$Int, $Int], [], false)}, {prop: "Less", name: "Less", pkg: "", typ: $funcType([$Int, $Int], [$Bool], false)}, {prop: "Sort", name: "Sort", pkg: "", typ: $funcType([], [], false)}, {prop: "Error", name: "Error", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Err", name: "Err", pkg: "", typ: $funcType([], [$error], false)}];
 	ptrType$1.methods = [{prop: "Add", name: "Add", pkg: "", typ: $funcType([Position, $String], [], false)}, {prop: "Reset", name: "Reset", pkg: "", typ: $funcType([], [], false)}, {prop: "RemoveMultiples", name: "RemoveMultiples", pkg: "", typ: $funcType([], [], false)}];
 	expr.methods = [{prop: "exprNode", name: "exprNode", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [], false)}];
-	ptrType$8.methods = [{prop: "init", name: "init", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([ptrType$3, $String, sliceType$1], [], false)}, {prop: "next", name: "next", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [], false)}, {prop: "error", name: "error", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([Pos, $String], [], false)}, {prop: "errorExpected", name: "errorExpected", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([Pos, $String], [], false)}, {prop: "expect", name: "expect", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([Token], [Pos], false)}, {prop: "parseIdent", name: "parseIdent", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [ptrType$2], false)}, {prop: "parseArrayLit", name: "parseArrayLit", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [ptrType$5], false)}, {prop: "parseMapLit", name: "parseMapLit", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [ptrType$6], false)}, {prop: "parseOperand", name: "parseOperand", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [Expr], false)}, {prop: "parseSelector", name: "parseSelector", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([Expr], [Expr], false)}, {prop: "parseIndex", name: "parseIndex", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([Expr], [Expr], false)}, {prop: "parseCall", name: "parseCall", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([Expr], [ptrType$7], false)}, {prop: "parsePrimaryExpr", name: "parsePrimaryExpr", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [Expr], false)}, {prop: "parseUnaryExpr", name: "parseUnaryExpr", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [Expr], false)}, {prop: "tokPrec", name: "tokPrec", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [Token, $Int], false)}, {prop: "parseBinaryExpr", name: "parseBinaryExpr", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([$Int], [Expr], false)}, {prop: "parseExpr", name: "parseExpr", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [Expr], false)}];
+	stmt.methods = [{prop: "stmtNode", name: "stmtNode", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [], false)}];
+	ptrType$11.methods = [{prop: "init", name: "init", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([ptrType$5, $String, sliceType$1], [], false)}, {prop: "next", name: "next", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [], false)}, {prop: "error", name: "error", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([Pos, $String], [], false)}, {prop: "errorExpected", name: "errorExpected", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([Pos, $String], [], false)}, {prop: "expect", name: "expect", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([Token], [Pos], false)}, {prop: "parseIdent", name: "parseIdent", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [ptrType$4], false)}, {prop: "parseArrayLit", name: "parseArrayLit", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [ptrType$7], false)}, {prop: "parseMapLit", name: "parseMapLit", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [ptrType$8], false)}, {prop: "parseFunction", name: "parseFunction", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [ptrType$9], false)}, {prop: "parseFunctionParameterList", name: "parseFunctionParameterList", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [ptrType$2], false)}, {prop: "parseFunctionBody", name: "parseFunctionBody", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [ptrType$3], false)}, {prop: "parseOperand", name: "parseOperand", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [Expr], false)}, {prop: "parseSelector", name: "parseSelector", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([Expr], [Expr], false)}, {prop: "parseIndex", name: "parseIndex", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([Expr], [Expr], false)}, {prop: "parseCall", name: "parseCall", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([Expr], [ptrType$10], false)}, {prop: "parsePrimaryExpr", name: "parsePrimaryExpr", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [Expr], false)}, {prop: "parseUnaryExpr", name: "parseUnaryExpr", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [Expr], false)}, {prop: "tokPrec", name: "tokPrec", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [Token, $Int], false)}, {prop: "parseBinaryExpr", name: "parseBinaryExpr", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([$Int], [Expr], false)}, {prop: "parseExpr", name: "parseExpr", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [Expr], false)}, {prop: "parseReturnStmt", name: "parseReturnStmt", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [Stmt], false)}, {prop: "parseStmt", name: "parseStmt", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [Stmt], false)}, {prop: "parseStmtList", name: "parseStmtList", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [sliceType$5], false)}];
 	Position.methods = [{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
-	ptrType$9.methods = [{prop: "IsValid", name: "IsValid", pkg: "", typ: $funcType([], [$Bool], false)}];
+	ptrType$12.methods = [{prop: "IsValid", name: "IsValid", pkg: "", typ: $funcType([], [$Bool], false)}];
 	Pos.methods = [{prop: "IsValid", name: "IsValid", pkg: "", typ: $funcType([], [$Bool], false)}];
-	ptrType.methods = [{prop: "Name", name: "Name", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Base", name: "Base", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Size", name: "Size", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "LineCount", name: "LineCount", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "AddLine", name: "AddLine", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "MergeLine", name: "MergeLine", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "SetLines", name: "SetLines", pkg: "", typ: $funcType([sliceType$4], [$Bool], false)}, {prop: "SetLinesForContent", name: "SetLinesForContent", pkg: "", typ: $funcType([sliceType$1], [], false)}, {prop: "AddLineInfo", name: "AddLineInfo", pkg: "", typ: $funcType([$Int, $String, $Int], [], false)}, {prop: "AddLineColumnInfo", name: "AddLineColumnInfo", pkg: "", typ: $funcType([$Int, $String, $Int, $Int], [], false)}, {prop: "Pos", name: "Pos", pkg: "", typ: $funcType([$Int], [Pos], false)}, {prop: "Offset", name: "Offset", pkg: "", typ: $funcType([Pos], [$Int], false)}, {prop: "Line", name: "Line", pkg: "", typ: $funcType([Pos], [$Int], false)}, {prop: "unpack", name: "unpack", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([$Int, $Bool], [$String, $Int, $Int], false)}, {prop: "position", name: "position", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([Pos, $Bool], [Position], false)}, {prop: "PositionFor", name: "PositionFor", pkg: "", typ: $funcType([Pos, $Bool], [Position], false)}, {prop: "Position", name: "Position", pkg: "", typ: $funcType([Pos], [Position], false)}];
-	ptrType$3.methods = [{prop: "Base", name: "Base", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "AddFile", name: "AddFile", pkg: "", typ: $funcType([$String, $Int, $Int], [ptrType], false)}, {prop: "Iterate", name: "Iterate", pkg: "", typ: $funcType([funcType], [], false)}, {prop: "file", name: "file", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([Pos], [ptrType], false)}, {prop: "File", name: "File", pkg: "", typ: $funcType([Pos], [ptrType], false)}, {prop: "PositionFor", name: "PositionFor", pkg: "", typ: $funcType([Pos, $Bool], [Position], false)}, {prop: "Position", name: "Position", pkg: "", typ: $funcType([Pos], [Position], false)}];
-	ptrType$10.methods = [{prop: "next", name: "next", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [], false)}, {prop: "Init", name: "Init", pkg: "", typ: $funcType([ptrType, sliceType$1, ErrorHandler], [], false)}, {prop: "error", name: "error", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([$Int, $String], [], false)}, {prop: "skipWhitespace", name: "skipWhitespace", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [], false)}, {prop: "switch2", name: "switch2", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([Token, Token], [Token], false)}, {prop: "switch3", name: "switch3", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([Token, Token, $Int32, Token], [Token], false)}, {prop: "switch4", name: "switch4", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([Token, Token, $Int32, Token, Token], [Token], false)}, {prop: "scanIdentifier", name: "scanIdentifier", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [$String], false)}, {prop: "scanMantissa", name: "scanMantissa", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([$Int], [], false)}, {prop: "scanNumber", name: "scanNumber", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([$Bool], [$String], false)}, {prop: "scanEscape", name: "scanEscape", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([$Int32], [$Bool], false)}, {prop: "scanString", name: "scanString", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([$Int32], [$String], false)}, {prop: "Scan", name: "Scan", pkg: "", typ: $funcType([], [Pos, Token, $String], false)}];
+	ptrType.methods = [{prop: "Name", name: "Name", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Base", name: "Base", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "Size", name: "Size", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "LineCount", name: "LineCount", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "AddLine", name: "AddLine", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "MergeLine", name: "MergeLine", pkg: "", typ: $funcType([$Int], [], false)}, {prop: "SetLines", name: "SetLines", pkg: "", typ: $funcType([sliceType$6], [$Bool], false)}, {prop: "SetLinesForContent", name: "SetLinesForContent", pkg: "", typ: $funcType([sliceType$1], [], false)}, {prop: "AddLineInfo", name: "AddLineInfo", pkg: "", typ: $funcType([$Int, $String, $Int], [], false)}, {prop: "AddLineColumnInfo", name: "AddLineColumnInfo", pkg: "", typ: $funcType([$Int, $String, $Int, $Int], [], false)}, {prop: "Pos", name: "Pos", pkg: "", typ: $funcType([$Int], [Pos], false)}, {prop: "Offset", name: "Offset", pkg: "", typ: $funcType([Pos], [$Int], false)}, {prop: "Line", name: "Line", pkg: "", typ: $funcType([Pos], [$Int], false)}, {prop: "unpack", name: "unpack", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([$Int, $Bool], [$String, $Int, $Int], false)}, {prop: "position", name: "position", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([Pos, $Bool], [Position], false)}, {prop: "PositionFor", name: "PositionFor", pkg: "", typ: $funcType([Pos, $Bool], [Position], false)}, {prop: "Position", name: "Position", pkg: "", typ: $funcType([Pos], [Position], false)}];
+	ptrType$5.methods = [{prop: "Base", name: "Base", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "AddFile", name: "AddFile", pkg: "", typ: $funcType([$String, $Int, $Int], [ptrType], false)}, {prop: "Iterate", name: "Iterate", pkg: "", typ: $funcType([funcType], [], false)}, {prop: "file", name: "file", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([Pos], [ptrType], false)}, {prop: "File", name: "File", pkg: "", typ: $funcType([Pos], [ptrType], false)}, {prop: "PositionFor", name: "PositionFor", pkg: "", typ: $funcType([Pos, $Bool], [Position], false)}, {prop: "Position", name: "Position", pkg: "", typ: $funcType([Pos], [Position], false)}];
+	ptrType$13.methods = [{prop: "next", name: "next", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [], false)}, {prop: "Init", name: "Init", pkg: "", typ: $funcType([ptrType, sliceType$1, ErrorHandler], [], false)}, {prop: "error", name: "error", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([$Int, $String], [], false)}, {prop: "skipWhitespace", name: "skipWhitespace", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [], false)}, {prop: "switch2", name: "switch2", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([Token, Token], [Token], false)}, {prop: "switch3", name: "switch3", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([Token, Token, $Int32, Token], [Token], false)}, {prop: "switch4", name: "switch4", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([Token, Token, $Int32, Token, Token], [Token], false)}, {prop: "scanIdentifier", name: "scanIdentifier", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [$String], false)}, {prop: "scanMantissa", name: "scanMantissa", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([$Int], [], false)}, {prop: "scanNumber", name: "scanNumber", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([$Bool], [$String], false)}, {prop: "scanEscape", name: "scanEscape", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([$Int32], [$Bool], false)}, {prop: "scanString", name: "scanString", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([$Int32], [$String], false)}, {prop: "Scan", name: "Scan", pkg: "", typ: $funcType([], [Pos, Token, $String], false)}];
 	Token.methods = [{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Precedence", name: "Precedence", pkg: "", typ: $funcType([], [$Int], false)}, {prop: "IsLiteral", name: "IsLiteral", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsOperator", name: "IsOperator", pkg: "", typ: $funcType([], [$Bool], false)}];
 	Error.init("", [{prop: "Pos", name: "Pos", embedded: false, exported: true, typ: Position, tag: ""}, {prop: "Msg", name: "Msg", embedded: false, exported: true, typ: $String, tag: ""}]);
-	ErrorList.init(ptrType$4);
+	ErrorList.init(ptrType$6);
 	Expr.init([{prop: "exprNode", name: "exprNode", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [], false)}]);
 	expr.init("", []);
+	Stmt.init([{prop: "stmtNode", name: "stmtNode", pkg: "github.com/lujjjh/gates/syntax", typ: $funcType([], [], false)}]);
+	stmt.init("", []);
 	Ident.init("github.com/lujjjh/gates/syntax", [{prop: "expr", name: "expr", embedded: true, exported: false, typ: expr, tag: ""}, {prop: "NamePos", name: "NamePos", embedded: false, exported: true, typ: Pos, tag: ""}, {prop: "Name", name: "Name", embedded: false, exported: true, typ: $String, tag: ""}]);
 	Lit.init("github.com/lujjjh/gates/syntax", [{prop: "expr", name: "expr", embedded: true, exported: false, typ: expr, tag: ""}, {prop: "ValuePos", name: "ValuePos", embedded: false, exported: true, typ: Pos, tag: ""}, {prop: "Kind", name: "Kind", embedded: false, exported: true, typ: Token, tag: ""}, {prop: "Value", name: "Value", embedded: false, exported: true, typ: $String, tag: ""}]);
 	ArrayLit.init("github.com/lujjjh/gates/syntax", [{prop: "expr", name: "expr", embedded: true, exported: false, typ: expr, tag: ""}, {prop: "Lbrack", name: "Lbrack", embedded: false, exported: true, typ: Pos, tag: ""}, {prop: "ElemList", name: "ElemList", embedded: false, exported: true, typ: sliceType$2, tag: ""}, {prop: "Rbrack", name: "Rbrack", embedded: false, exported: true, typ: Pos, tag: ""}]);
 	MapLitEntry.init("", [{prop: "Key", name: "Key", embedded: false, exported: true, typ: Expr, tag: ""}, {prop: "Value", name: "Value", embedded: false, exported: true, typ: Expr, tag: ""}]);
 	MapLit.init("github.com/lujjjh/gates/syntax", [{prop: "expr", name: "expr", embedded: true, exported: false, typ: expr, tag: ""}, {prop: "Lbrace", name: "Lbrace", embedded: false, exported: true, typ: Pos, tag: ""}, {prop: "Entries", name: "Entries", embedded: false, exported: true, typ: sliceType$3, tag: ""}, {prop: "Rbrace", name: "Rbrace", embedded: false, exported: true, typ: Pos, tag: ""}]);
+	FunctionLit.init("github.com/lujjjh/gates/syntax", [{prop: "expr", name: "expr", embedded: true, exported: false, typ: expr, tag: ""}, {prop: "Function", name: "Function", embedded: false, exported: true, typ: Pos, tag: ""}, {prop: "ParameterList", name: "ParameterList", embedded: false, exported: true, typ: ptrType$2, tag: ""}, {prop: "Body", name: "Body", embedded: false, exported: true, typ: ptrType$3, tag: ""}]);
 	UnaryExpr.init("github.com/lujjjh/gates/syntax", [{prop: "expr", name: "expr", embedded: true, exported: false, typ: expr, tag: ""}, {prop: "OpPos", name: "OpPos", embedded: false, exported: true, typ: Pos, tag: ""}, {prop: "Op", name: "Op", embedded: false, exported: true, typ: Token, tag: ""}, {prop: "X", name: "X", embedded: false, exported: true, typ: Expr, tag: ""}]);
 	BinaryExpr.init("github.com/lujjjh/gates/syntax", [{prop: "expr", name: "expr", embedded: true, exported: false, typ: expr, tag: ""}, {prop: "X", name: "X", embedded: false, exported: true, typ: Expr, tag: ""}, {prop: "OpPos", name: "OpPos", embedded: false, exported: true, typ: Pos, tag: ""}, {prop: "Op", name: "Op", embedded: false, exported: true, typ: Token, tag: ""}, {prop: "Y", name: "Y", embedded: false, exported: true, typ: Expr, tag: ""}]);
 	ParenExpr.init("github.com/lujjjh/gates/syntax", [{prop: "expr", name: "expr", embedded: true, exported: false, typ: expr, tag: ""}, {prop: "Lparen", name: "Lparen", embedded: false, exported: true, typ: Pos, tag: ""}, {prop: "X", name: "X", embedded: false, exported: true, typ: Expr, tag: ""}, {prop: "Rparen", name: "Rparen", embedded: false, exported: true, typ: Pos, tag: ""}]);
-	SelectorExpr.init("github.com/lujjjh/gates/syntax", [{prop: "expr", name: "expr", embedded: true, exported: false, typ: expr, tag: ""}, {prop: "X", name: "X", embedded: false, exported: true, typ: Expr, tag: ""}, {prop: "Sel", name: "Sel", embedded: false, exported: true, typ: ptrType$2, tag: ""}]);
+	SelectorExpr.init("github.com/lujjjh/gates/syntax", [{prop: "expr", name: "expr", embedded: true, exported: false, typ: expr, tag: ""}, {prop: "X", name: "X", embedded: false, exported: true, typ: Expr, tag: ""}, {prop: "Sel", name: "Sel", embedded: false, exported: true, typ: ptrType$4, tag: ""}]);
 	IndexExpr.init("github.com/lujjjh/gates/syntax", [{prop: "expr", name: "expr", embedded: true, exported: false, typ: expr, tag: ""}, {prop: "X", name: "X", embedded: false, exported: true, typ: Expr, tag: ""}, {prop: "Lbrack", name: "Lbrack", embedded: false, exported: true, typ: Pos, tag: ""}, {prop: "Index", name: "Index", embedded: false, exported: true, typ: Expr, tag: ""}, {prop: "Rbrack", name: "Rbrack", embedded: false, exported: true, typ: Pos, tag: ""}]);
 	CallExpr.init("github.com/lujjjh/gates/syntax", [{prop: "expr", name: "expr", embedded: true, exported: false, typ: expr, tag: ""}, {prop: "Fun", name: "Fun", embedded: false, exported: true, typ: Expr, tag: ""}, {prop: "Lparen", name: "Lparen", embedded: false, exported: true, typ: Pos, tag: ""}, {prop: "Args", name: "Args", embedded: false, exported: true, typ: sliceType$2, tag: ""}, {prop: "Rparen", name: "Rparen", embedded: false, exported: true, typ: Pos, tag: ""}]);
+	ReturnStmt.init("github.com/lujjjh/gates/syntax", [{prop: "stmt", name: "stmt", embedded: true, exported: false, typ: stmt, tag: ""}, {prop: "Return", name: "Return", embedded: false, exported: true, typ: Pos, tag: ""}, {prop: "Result", name: "Result", embedded: false, exported: true, typ: Expr, tag: ""}]);
 	BadExpr.init("github.com/lujjjh/gates/syntax", [{prop: "expr", name: "expr", embedded: true, exported: false, typ: expr, tag: ""}, {prop: "From", name: "From", embedded: false, exported: true, typ: Pos, tag: ""}, {prop: "To", name: "To", embedded: false, exported: true, typ: Pos, tag: ""}]);
+	BadStmt.init("github.com/lujjjh/gates/syntax", [{prop: "stmt", name: "stmt", embedded: true, exported: false, typ: stmt, tag: ""}, {prop: "From", name: "From", embedded: false, exported: true, typ: Pos, tag: ""}, {prop: "To", name: "To", embedded: false, exported: true, typ: Pos, tag: ""}]);
+	ParameterList.init("", [{prop: "Lparen", name: "Lparen", embedded: false, exported: true, typ: Pos, tag: ""}, {prop: "List", name: "List", embedded: false, exported: true, typ: sliceType$4, tag: ""}, {prop: "Rparen", name: "Rparen", embedded: false, exported: true, typ: Pos, tag: ""}]);
+	FunctionBody.init("", [{prop: "Lbrace", name: "Lbrace", embedded: false, exported: true, typ: Pos, tag: ""}, {prop: "StmtList", name: "StmtList", embedded: false, exported: true, typ: sliceType$5, tag: ""}, {prop: "Rbrace", name: "Rbrace", embedded: false, exported: true, typ: Pos, tag: ""}]);
 	parser.init("github.com/lujjjh/gates/syntax", [{prop: "file", name: "file", embedded: false, exported: false, typ: ptrType, tag: ""}, {prop: "errors", name: "errors", embedded: false, exported: false, typ: ErrorList, tag: ""}, {prop: "scanner", name: "scanner", embedded: false, exported: false, typ: Scanner, tag: ""}, {prop: "pos", name: "pos", embedded: false, exported: false, typ: Pos, tag: ""}, {prop: "tok", name: "tok", embedded: false, exported: false, typ: Token, tag: ""}, {prop: "lit", name: "lit", embedded: false, exported: false, typ: $String, tag: ""}]);
 	bailout.init("", []);
 	Position.init("", [{prop: "Filename", name: "Filename", embedded: false, exported: true, typ: $String, tag: ""}, {prop: "Offset", name: "Offset", embedded: false, exported: true, typ: $Int, tag: ""}, {prop: "Line", name: "Line", embedded: false, exported: true, typ: $Int, tag: ""}, {prop: "Column", name: "Column", embedded: false, exported: true, typ: $Int, tag: ""}]);
-	File.init("github.com/lujjjh/gates/syntax", [{prop: "set", name: "set", embedded: false, exported: false, typ: ptrType$3, tag: ""}, {prop: "name", name: "name", embedded: false, exported: false, typ: $String, tag: ""}, {prop: "base", name: "base", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "size", name: "size", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "mutex", name: "mutex", embedded: false, exported: false, typ: sync.Mutex, tag: ""}, {prop: "lines", name: "lines", embedded: false, exported: false, typ: sliceType$4, tag: ""}, {prop: "infos", name: "infos", embedded: false, exported: false, typ: sliceType$6, tag: ""}]);
+	File.init("github.com/lujjjh/gates/syntax", [{prop: "set", name: "set", embedded: false, exported: false, typ: ptrType$5, tag: ""}, {prop: "name", name: "name", embedded: false, exported: false, typ: $String, tag: ""}, {prop: "base", name: "base", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "size", name: "size", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "mutex", name: "mutex", embedded: false, exported: false, typ: sync.Mutex, tag: ""}, {prop: "lines", name: "lines", embedded: false, exported: false, typ: sliceType$6, tag: ""}, {prop: "infos", name: "infos", embedded: false, exported: false, typ: sliceType$8, tag: ""}]);
 	lineInfo.init("", [{prop: "Offset", name: "Offset", embedded: false, exported: true, typ: $Int, tag: ""}, {prop: "Filename", name: "Filename", embedded: false, exported: true, typ: $String, tag: ""}, {prop: "Line", name: "Line", embedded: false, exported: true, typ: $Int, tag: ""}, {prop: "Column", name: "Column", embedded: false, exported: true, typ: $Int, tag: ""}]);
-	FileSet.init("github.com/lujjjh/gates/syntax", [{prop: "mutex", name: "mutex", embedded: false, exported: false, typ: sync.RWMutex, tag: ""}, {prop: "base", name: "base", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "files", name: "files", embedded: false, exported: false, typ: sliceType$5, tag: ""}, {prop: "last", name: "last", embedded: false, exported: false, typ: ptrType, tag: ""}]);
+	FileSet.init("github.com/lujjjh/gates/syntax", [{prop: "mutex", name: "mutex", embedded: false, exported: false, typ: sync.RWMutex, tag: ""}, {prop: "base", name: "base", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "files", name: "files", embedded: false, exported: false, typ: sliceType$7, tag: ""}, {prop: "last", name: "last", embedded: false, exported: false, typ: ptrType, tag: ""}]);
 	ErrorHandler.init([Position, $String], [], false);
 	Scanner.init("github.com/lujjjh/gates/syntax", [{prop: "file", name: "file", embedded: false, exported: false, typ: ptrType, tag: ""}, {prop: "src", name: "src", embedded: false, exported: false, typ: sliceType$1, tag: ""}, {prop: "err", name: "err", embedded: false, exported: false, typ: ErrorHandler, tag: ""}, {prop: "ch", name: "ch", embedded: false, exported: false, typ: $Int32, tag: ""}, {prop: "offset", name: "offset", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "rdOffset", name: "rdOffset", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "lineOffset", name: "lineOffset", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "ErrorCount", name: "ErrorCount", embedded: false, exported: true, typ: $Int, tag: ""}]);
 	$init = function() {
@@ -31709,14 +31907,14 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 		$r = sync.$init(); /* */ $s = 5; case 5: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$r = unicode.$init(); /* */ $s = 6; case 6: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$r = utf8.$init(); /* */ $s = 7; case 7: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		tokens = $toNativeArray($kindString, ["ILLEGAL", "EOF", "", "IDENT", "NUMBER", "STRING", "", "", "", "", "+", "-", "*", "/", "%", "&", "|", "^", "<<", ">>", "&&", "||", "==", "<", ">", "!", "!=", "<=", ">=", "(", "[", "{", ",", ".", ")", "]", "}", ";", ":"]);
+		tokens = $toNativeArray($kindString, ["ILLEGAL", "EOF", "", "IDENT", "NUMBER", "STRING", "", "", "", "", "", "", "+", "-", "*", "/", "%", "&", "|", "^", "<<", ">>", "&&", "||", "==", "<", ">", "!", "!=", "<=", ">=", "(", "[", "{", ",", ".", ")", "]", "}", ";", ":"]);
 		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.$init = $init;
 	return $pkg;
 })();
 $packages["github.com/lujjjh/gates"] = (function() {
-	var $pkg = {}, $init, fmt, syntax, math, reflect, strconv, strings, utf8, Array, Bool, compiler, Function, FunctionCall, functionCall, nativeFunction, Global, Map, _Null, Int, Float, Number, getter, Program, Ref, Runtime, _String, Value, valueStack, vm, instruction, _halt, load, _loadGlobal, _pop, newArray, newMap, _get, jeq1, jneq1, _plus, _neg, _not, _add, _sub, _mul, _div, _mod, _and, _or, _xor, _shl, _shr, _eq, _neq, _lt, _lte, _gt, _gte, _call, ptrType, ptrType$1, sliceType, sliceType$1, sliceType$2, ptrType$2, ptrType$3, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, ptrType$9, ptrType$10, ptrType$11, funcType, mapType, mapType$1, ptrType$12, sliceType$3, ptrType$13, ptrType$14, sliceType$4, ptrType$15, ptrType$16, ptrType$17, sharedRuntime, _EmptyFunction, halt, loadGlobal, pop, get, plus, neg, not, add, sub, mul, div, mod, and, or, xor, shl, shr, eq, neq, lt, lte, gt, gte, call, builtInBool, builtInInt, builtInNumber, builtInString, FunctionFunc, NewGlobal, objectGet, ref, unref, Compile, New, String, less;
+	var $pkg = {}, $init, fmt, syntax, math, reflect, strconv, strings, utf8, Array, Bool, compiler, Function, FunctionCall, functionCall, nativeFunction, literalFunction, Global, Map, _Null, Int, Float, Number, getter, Program, Ref, Runtime, scope, _String, Value, valueStack, vm, instruction, _halt, load, _loadNull, _loadGlobal, loadStack, storeStack, loadLocal, _pop, newArray, newMap, newFunc, _get, jmp1, jeq1, jneq1, _plus, _neg, _not, _add, _sub, _mul, _div, _mod, _and, _or, _xor, _shl, _shr, _eq, _neq, _lt, _lte, _gt, _gte, _call, _ret, ptrType, ptrType$1, sliceType, sliceType$1, sliceType$2, ptrType$2, ptrType$3, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, ptrType$9, ptrType$10, ptrType$11, ptrType$12, ptrType$13, ptrType$14, funcType, mapType, mapType$1, ptrType$15, sliceType$3, ptrType$16, ptrType$17, ptrType$18, sliceType$4, ptrType$19, ptrType$20, mapType$2, ptrType$21, sharedRuntime, _EmptyFunction, halt, loadNull, loadGlobal, pop, get, plus, neg, not, add, sub, mul, div, mod, and, or, xor, shl, shr, eq, neq, lt, lte, gt, gte, call, ret, builtInBool, builtInInt, builtInNumber, builtInString, FunctionFunc, NewGlobal, objectGet, ref, unref, Compile, New, newScope, String, less;
 	fmt = $packages["fmt"];
 	syntax = $packages["github.com/lujjjh/gates/syntax"];
 	math = $packages["math"];
@@ -31726,13 +31924,15 @@ $packages["github.com/lujjjh/gates"] = (function() {
 	utf8 = $packages["unicode/utf8"];
 	Array = $pkg.Array = $newType(12, $kindSlice, "gates.Array", true, "github.com/lujjjh/gates", true, null);
 	Bool = $pkg.Bool = $newType(1, $kindBool, "gates.Bool", true, "github.com/lujjjh/gates", true, null);
-	compiler = $pkg.compiler = $newType(0, $kindStruct, "gates.compiler", true, "github.com/lujjjh/gates", false, function(program_) {
+	compiler = $pkg.compiler = $newType(0, $kindStruct, "gates.compiler", true, "github.com/lujjjh/gates", false, function(program_, scope_) {
 		this.$val = this;
 		if (arguments.length === 0) {
-			this.program = ptrType$12.nil;
+			this.program = ptrType$15.nil;
+			this.scope = ptrType$3.nil;
 			return;
 		}
 		this.program = program_;
+		this.scope = scope_;
 	});
 	Function = $pkg.Function = $newType(8, $kindInterface, "gates.Function", true, "github.com/lujjjh/gates", true, null);
 	FunctionCall = $pkg.FunctionCall = $newType(8, $kindInterface, "gates.FunctionCall", true, "github.com/lujjjh/gates", true, null);
@@ -31751,6 +31951,16 @@ $packages["github.com/lujjjh/gates"] = (function() {
 			return;
 		}
 		this.fun = fun_;
+	});
+	literalFunction = $pkg.literalFunction = $newType(0, $kindStruct, "gates.literalFunction", true, "github.com/lujjjh/gates", false, function(pc_, stackSize_) {
+		this.$val = this;
+		if (arguments.length === 0) {
+			this.pc = 0;
+			this.stackSize = 0;
+			return;
+		}
+		this.pc = pc_;
+		this.stackSize = stackSize_;
 	});
 	Global = $pkg.Global = $newType(0, $kindStruct, "gates.Global", true, "github.com/lujjjh/gates", true, function(m_) {
 		this.$val = this;
@@ -31799,6 +32009,16 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		this.vm = vm_;
 		this.global = global_;
 	});
+	scope = $pkg.scope = $newType(0, $kindStruct, "gates.scope", true, "github.com/lujjjh/gates", false, function(names_, outer_) {
+		this.$val = this;
+		if (arguments.length === 0) {
+			this.names = false;
+			this.outer = ptrType$3.nil;
+			return;
+		}
+		this.names = names_;
+		this.outer = outer_;
+	});
 	_String = $pkg._String = $newType(0, $kindStruct, "gates._String", true, "github.com/lujjjh/gates", false, function(s_) {
 		this.$val = this;
 		if (arguments.length === 0) {
@@ -31818,20 +32038,22 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		this.l = l_;
 		this.sp = sp_;
 	});
-	vm = $pkg.vm = $newType(0, $kindStruct, "gates.vm", true, "github.com/lujjjh/gates", false, function(r_, halt_, pc_, stack_, program_) {
+	vm = $pkg.vm = $newType(0, $kindStruct, "gates.vm", true, "github.com/lujjjh/gates", false, function(r_, halt_, pc_, stack_, bp_, program_) {
 		this.$val = this;
 		if (arguments.length === 0) {
-			this.r = ptrType$13.nil;
+			this.r = ptrType$16.nil;
 			this.halt = false;
 			this.pc = 0;
 			this.stack = new valueStack.ptr(sliceType$3.nil, 0);
-			this.program = ptrType$12.nil;
+			this.bp = 0;
+			this.program = ptrType$15.nil;
 			return;
 		}
 		this.r = r_;
 		this.halt = halt_;
 		this.pc = pc_;
 		this.stack = stack_;
+		this.bp = bp_;
 		this.program = program_;
 	});
 	instruction = $pkg.instruction = $newType(8, $kindInterface, "gates.instruction", true, "github.com/lujjjh/gates", false, null);
@@ -31842,12 +32064,21 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		}
 	});
 	load = $pkg.load = $newType(4, $kindUint, "gates.load", true, "github.com/lujjjh/gates", false, null);
+	_loadNull = $pkg._loadNull = $newType(0, $kindStruct, "gates._loadNull", true, "github.com/lujjjh/gates", false, function() {
+		this.$val = this;
+		if (arguments.length === 0) {
+			return;
+		}
+	});
 	_loadGlobal = $pkg._loadGlobal = $newType(0, $kindStruct, "gates._loadGlobal", true, "github.com/lujjjh/gates", false, function() {
 		this.$val = this;
 		if (arguments.length === 0) {
 			return;
 		}
 	});
+	loadStack = $pkg.loadStack = $newType(4, $kindInt, "gates.loadStack", true, "github.com/lujjjh/gates", false, null);
+	storeStack = $pkg.storeStack = $newType(4, $kindUint32, "gates.storeStack", true, "github.com/lujjjh/gates", false, null);
+	loadLocal = $pkg.loadLocal = $newType(4, $kindUint32, "gates.loadLocal", true, "github.com/lujjjh/gates", false, null);
 	_pop = $pkg._pop = $newType(0, $kindStruct, "gates._pop", true, "github.com/lujjjh/gates", false, function() {
 		this.$val = this;
 		if (arguments.length === 0) {
@@ -31856,12 +32087,14 @@ $packages["github.com/lujjjh/gates"] = (function() {
 	});
 	newArray = $pkg.newArray = $newType(4, $kindUint, "gates.newArray", true, "github.com/lujjjh/gates", false, null);
 	newMap = $pkg.newMap = $newType(4, $kindUint, "gates.newMap", true, "github.com/lujjjh/gates", false, null);
+	newFunc = $pkg.newFunc = $newType(4, $kindUint32, "gates.newFunc", true, "github.com/lujjjh/gates", false, null);
 	_get = $pkg._get = $newType(0, $kindStruct, "gates._get", true, "github.com/lujjjh/gates", false, function() {
 		this.$val = this;
 		if (arguments.length === 0) {
 			return;
 		}
 	});
+	jmp1 = $pkg.jmp1 = $newType(8, $kindInt64, "gates.jmp1", true, "github.com/lujjjh/gates", false, null);
 	jeq1 = $pkg.jeq1 = $newType(8, $kindInt64, "gates.jeq1", true, "github.com/lujjjh/gates", false, null);
 	jneq1 = $pkg.jneq1 = $newType(8, $kindInt64, "gates.jneq1", true, "github.com/lujjjh/gates", false, null);
 	_plus = $pkg._plus = $newType(0, $kindStruct, "gates._plus", true, "github.com/lujjjh/gates", false, function() {
@@ -31984,32 +32217,43 @@ $packages["github.com/lujjjh/gates"] = (function() {
 			return;
 		}
 	});
+	_ret = $pkg._ret = $newType(0, $kindStruct, "gates._ret", true, "github.com/lujjjh/gates", false, function() {
+		this.$val = this;
+		if (arguments.length === 0) {
+			return;
+		}
+	});
 	ptrType = $ptrType(vm);
 	ptrType$1 = $ptrType(Global);
 	sliceType = $sliceType($String);
 	sliceType$1 = $sliceType($emptyInterface);
 	sliceType$2 = $sliceType(instruction);
-	ptrType$2 = $ptrType(syntax.Ident);
-	ptrType$3 = $ptrType(syntax.Lit);
-	ptrType$4 = $ptrType(syntax.ArrayLit);
-	ptrType$5 = $ptrType(syntax.MapLit);
-	ptrType$6 = $ptrType(syntax.UnaryExpr);
-	ptrType$7 = $ptrType(syntax.BinaryExpr);
-	ptrType$8 = $ptrType(syntax.ParenExpr);
-	ptrType$9 = $ptrType(syntax.SelectorExpr);
-	ptrType$10 = $ptrType(syntax.IndexExpr);
-	ptrType$11 = $ptrType(syntax.CallExpr);
+	ptrType$2 = $ptrType(syntax.ReturnStmt);
+	ptrType$3 = $ptrType(scope);
+	ptrType$4 = $ptrType(syntax.Ident);
+	ptrType$5 = $ptrType(syntax.Lit);
+	ptrType$6 = $ptrType(syntax.ArrayLit);
+	ptrType$7 = $ptrType(syntax.MapLit);
+	ptrType$8 = $ptrType(syntax.FunctionLit);
+	ptrType$9 = $ptrType(syntax.UnaryExpr);
+	ptrType$10 = $ptrType(syntax.BinaryExpr);
+	ptrType$11 = $ptrType(syntax.ParenExpr);
+	ptrType$12 = $ptrType(syntax.SelectorExpr);
+	ptrType$13 = $ptrType(syntax.IndexExpr);
+	ptrType$14 = $ptrType(syntax.CallExpr);
 	funcType = $funcType([FunctionCall], [Value], false);
 	mapType = $mapType($String, $emptyInterface);
 	mapType$1 = $mapType($String, Value);
-	ptrType$12 = $ptrType(Program);
+	ptrType$15 = $ptrType(Program);
 	sliceType$3 = $sliceType(Value);
-	ptrType$13 = $ptrType(Runtime);
-	ptrType$14 = $ptrType(nativeFunction);
+	ptrType$16 = $ptrType(Runtime);
+	ptrType$17 = $ptrType(nativeFunction);
+	ptrType$18 = $ptrType(literalFunction);
 	sliceType$4 = $sliceType(syntax.Expr);
-	ptrType$15 = $ptrType(compiler);
-	ptrType$16 = $ptrType(functionCall);
-	ptrType$17 = $ptrType(valueStack);
+	ptrType$19 = $ptrType(compiler);
+	ptrType$20 = $ptrType(functionCall);
+	mapType$2 = $mapType($String, $Uint32);
+	ptrType$21 = $ptrType(valueStack);
 	Array.prototype.IsString = function() {
 		return false;
 	};
@@ -32296,14 +32540,61 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		c.program.code = $appendSlice(c.program.code, instructions);
 	};
 	compiler.prototype.emit = function(instructions) { return this.$val.emit(instructions); };
-	compiler.ptr.prototype.compileIdent = function(l) {
-		var _r, c, l, x, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; c = $f.c; l = $f.l; x = $f.x; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+	compiler.ptr.prototype.compileReturnStmt = function(s) {
+		var c, s, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; c = $f.c; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		c = this;
+		/* */ if ($interfaceIsEqual(s.Result, $ifaceNil)) { $s = 1; continue; }
+		/* */ $s = 2; continue;
+		/* if ($interfaceIsEqual(s.Result, $ifaceNil)) { */ case 1:
+			c.emit(new sliceType$2([new loadNull.constructor.elem(loadNull)]));
+			$s = 3; continue;
+		/* } else { */ case 2:
+			$r = c.compileExpr(s.Result); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		/* } */ case 3:
+		c.emit(new sliceType$2([new ret.constructor.elem(ret)]));
+		$s = -1; return;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: compiler.ptr.prototype.compileReturnStmt }; } $f.c = c; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	compiler.prototype.compileReturnStmt = function(s) { return this.$val.compileReturnStmt(s); };
+	compiler.ptr.prototype.compileStmt = function(s) {
+		var _r, _ref, c, s, s$1, s$2, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _ref = $f._ref; c = $f.c; s = $f.s; s$1 = $f.s$1; s$2 = $f.s$2; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		c = this;
+		_ref = s;
+		/* */ if ($assertType(_ref, ptrType$2, true)[1]) { $s = 1; continue; }
+		/* */ $s = 2; continue;
+		/* if ($assertType(_ref, ptrType$2, true)[1]) { */ case 1:
+			s$1 = _ref.$val;
+			$r = c.compileReturnStmt(s$1); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			$s = 3; continue;
+		/* } else { */ case 2:
+			s$2 = _ref;
+			_r = fmt.Errorf("unknown statement type: %T", new sliceType$1([s$2])); /* */ $s = 5; case 5: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+			$panic(_r);
+		/* } */ case 3:
+		$s = -1; return;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: compiler.ptr.prototype.compileStmt }; } $f._r = _r; $f._ref = _ref; $f.c = c; $f.s = s; $f.s$1 = s$1; $f.s$2 = s$2; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	compiler.prototype.compileStmt = function(s) { return this.$val.compileStmt(s); };
+	compiler.ptr.prototype.compileIdent = function(l) {
+		var _r, _tuple, c, idx, l, name, ok, x, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; c = $f.c; idx = $f.idx; l = $f.l; name = $f.name; ok = $f.ok; x = $f.x; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		c = this;
+		name = l.Name;
+		if (!(c.scope === ptrType$3.nil)) {
+			_tuple = c.scope.lookupName(name);
+			idx = _tuple[0];
+			ok = _tuple[1];
+			if (ok) {
+				c.emit(new sliceType$2([new loadLocal(((idx >>> 0)))]));
+				$s = -1; return;
+			}
+		}
 		_r = c.program.defineLit((x = String(l.Name), new x.constructor.elem(x))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		$r = c.emit(new sliceType$2([new load(((_r >>> 0))), new loadGlobal.constructor.elem(loadGlobal), new get.constructor.elem(get)])); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$s = -1; return;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: compiler.ptr.prototype.compileIdent }; } $f._r = _r; $f.c = c; $f.l = l; $f.x = x; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: compiler.ptr.prototype.compileIdent }; } $f._r = _r; $f._tuple = _tuple; $f.c = c; $f.idx = idx; $f.l = l; $f.name = name; $f.ok = ok; $f.x = x; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	compiler.prototype.compileIdent = function(l) { return this.$val.compileIdent(l); };
 	compiler.ptr.prototype.compileLit = function(l) {
@@ -32389,23 +32680,56 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: compiler.ptr.prototype.compileMapLit }; } $f._i = _i; $f._ref = _ref; $f.c = c; $f.e = e; $f.entry = entry; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	compiler.prototype.compileMapLit = function(e) { return this.$val.compileMapLit(e); };
+	compiler.ptr.prototype.compileFunctionLit = function(e) {
+		var _i, _i$1, _ref, _ref$1, c, e, i, ident, idx, j, stmt, x, x$1, x$2, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _i$1 = $f._i$1; _ref = $f._ref; _ref$1 = $f._ref$1; c = $f.c; e = $f.e; i = $f.i; ident = $f.ident; idx = $f.idx; j = $f.j; stmt = $f.stmt; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		c = this;
+		j = c.program.code.$length;
+		c.emit(new sliceType$2([$ifaceNil, $ifaceNil]));
+		c.scope = newScope(c.scope);
+		_ref = e.ParameterList.List;
+		_i = 0;
+		while (true) {
+			if (!(_i < _ref.$length)) { break; }
+			i = _i;
+			ident = ((_i < 0 || _i >= _ref.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref.$array[_ref.$offset + _i]);
+			idx = c.scope.bindName(ident.Name);
+			c.emit(new sliceType$2([new loadStack(((-((i + 1 >> 0)) >> 0))), new storeStack(((idx >>> 0)))]));
+			_i++;
+		}
+		_ref$1 = e.Body.StmtList;
+		_i$1 = 0;
+		/* while (true) { */ case 1:
+			/* if (!(_i$1 < _ref$1.$length)) { break; } */ if(!(_i$1 < _ref$1.$length)) { $s = 2; continue; }
+			stmt = ((_i$1 < 0 || _i$1 >= _ref$1.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref$1.$array[_ref$1.$offset + _i$1]);
+			$r = c.compileStmt(stmt); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			_i$1++;
+		/* } */ $s = 1; continue; case 2:
+		c.emit(new sliceType$2([new loadNull.constructor.elem(loadNull), new ret.constructor.elem(ret)]));
+		(x = c.program.code, ((j < 0 || j >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + j] = new newFunc(((((($keys(c.scope.names).length << 24 >> 0) | j) + 2 >> 0) >>> 0)))));
+		c.scope = c.scope.outer;
+		(x$1 = c.program.code, x$2 = j + 1 >> 0, ((x$2 < 0 || x$2 >= x$1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$1.$array[x$1.$offset + x$2] = (new jmp1(0, (c.program.code.$length - ((j + 1 >> 0)) >> 0)))));
+		$s = -1; return;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: compiler.ptr.prototype.compileFunctionLit }; } $f._i = _i; $f._i$1 = _i$1; $f._ref = _ref; $f._ref$1 = _ref$1; $f.c = c; $f.e = e; $f.i = i; $f.ident = ident; $f.idx = idx; $f.j = j; $f.stmt = stmt; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	compiler.prototype.compileFunctionLit = function(e) { return this.$val.compileFunctionLit(e); };
 	compiler.ptr.prototype.compileUnaryExpr = function(e) {
 		var _1, _r, c, e, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _1 = $f._1; _r = $f._r; c = $f.c; e = $f.e; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		c = this;
 		$r = c.compileExpr(e.X); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 			_1 = e.Op;
-			/* */ if (_1 === (10)) { $s = 3; continue; }
-			/* */ if (_1 === (11)) { $s = 4; continue; }
-			/* */ if (_1 === (25)) { $s = 5; continue; }
+			/* */ if (_1 === (12)) { $s = 3; continue; }
+			/* */ if (_1 === (13)) { $s = 4; continue; }
+			/* */ if (_1 === (27)) { $s = 5; continue; }
 			/* */ $s = 6; continue;
-			/* if (_1 === (10)) { */ case 3:
+			/* if (_1 === (12)) { */ case 3:
 				c.emit(new sliceType$2([new plus.constructor.elem(plus)]));
 				$s = 7; continue;
-			/* } else if (_1 === (11)) { */ case 4:
+			/* } else if (_1 === (13)) { */ case 4:
 				c.emit(new sliceType$2([new neg.constructor.elem(neg)]));
 				$s = 7; continue;
-			/* } else if (_1 === (25)) { */ case 5:
+			/* } else if (_1 === (27)) { */ case 5:
 				c.emit(new sliceType$2([new not.constructor.elem(not)]));
 				$s = 7; continue;
 			/* } else { */ case 6:
@@ -32422,115 +32746,115 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _1 = $f._1; _r = $f._r; c = $f.c; e = $f.e; j = $f.j; j$1 = $f.j$1; x = $f.x; x$1 = $f.x$1; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		c = this;
 			_1 = e.Op;
-			/* */ if (_1 === (10)) { $s = 2; continue; }
-			/* */ if (_1 === (11)) { $s = 3; continue; }
-			/* */ if (_1 === (12)) { $s = 4; continue; }
-			/* */ if (_1 === (13)) { $s = 5; continue; }
-			/* */ if (_1 === (14)) { $s = 6; continue; }
-			/* */ if (_1 === (15)) { $s = 7; continue; }
-			/* */ if (_1 === (16)) { $s = 8; continue; }
-			/* */ if (_1 === (17)) { $s = 9; continue; }
-			/* */ if (_1 === (18)) { $s = 10; continue; }
-			/* */ if (_1 === (19)) { $s = 11; continue; }
-			/* */ if (_1 === (20)) { $s = 12; continue; }
-			/* */ if (_1 === (21)) { $s = 13; continue; }
-			/* */ if (_1 === (22)) { $s = 14; continue; }
-			/* */ if (_1 === (23)) { $s = 15; continue; }
-			/* */ if (_1 === (24)) { $s = 16; continue; }
-			/* */ if (_1 === (26)) { $s = 17; continue; }
-			/* */ if (_1 === (27)) { $s = 18; continue; }
-			/* */ if (_1 === (28)) { $s = 19; continue; }
+			/* */ if (_1 === (12)) { $s = 2; continue; }
+			/* */ if (_1 === (13)) { $s = 3; continue; }
+			/* */ if (_1 === (14)) { $s = 4; continue; }
+			/* */ if (_1 === (15)) { $s = 5; continue; }
+			/* */ if (_1 === (16)) { $s = 6; continue; }
+			/* */ if (_1 === (17)) { $s = 7; continue; }
+			/* */ if (_1 === (18)) { $s = 8; continue; }
+			/* */ if (_1 === (19)) { $s = 9; continue; }
+			/* */ if (_1 === (20)) { $s = 10; continue; }
+			/* */ if (_1 === (21)) { $s = 11; continue; }
+			/* */ if (_1 === (22)) { $s = 12; continue; }
+			/* */ if (_1 === (23)) { $s = 13; continue; }
+			/* */ if (_1 === (24)) { $s = 14; continue; }
+			/* */ if (_1 === (25)) { $s = 15; continue; }
+			/* */ if (_1 === (26)) { $s = 16; continue; }
+			/* */ if (_1 === (28)) { $s = 17; continue; }
+			/* */ if (_1 === (29)) { $s = 18; continue; }
+			/* */ if (_1 === (30)) { $s = 19; continue; }
 			/* */ $s = 20; continue;
-			/* if (_1 === (10)) { */ case 2:
+			/* if (_1 === (12)) { */ case 2:
 				$r = c.compileExpr(e.X); /* */ $s = 22; case 22: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				$r = c.compileExpr(e.Y); /* */ $s = 23; case 23: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				c.emit(new sliceType$2([new add.constructor.elem(add)]));
 				$s = 21; continue;
-			/* } else if (_1 === (11)) { */ case 3:
+			/* } else if (_1 === (13)) { */ case 3:
 				$r = c.compileExpr(e.X); /* */ $s = 24; case 24: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				$r = c.compileExpr(e.Y); /* */ $s = 25; case 25: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				c.emit(new sliceType$2([new sub.constructor.elem(sub)]));
 				$s = 21; continue;
-			/* } else if (_1 === (12)) { */ case 4:
+			/* } else if (_1 === (14)) { */ case 4:
 				$r = c.compileExpr(e.X); /* */ $s = 26; case 26: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				$r = c.compileExpr(e.Y); /* */ $s = 27; case 27: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				c.emit(new sliceType$2([new mul.constructor.elem(mul)]));
 				$s = 21; continue;
-			/* } else if (_1 === (13)) { */ case 5:
+			/* } else if (_1 === (15)) { */ case 5:
 				$r = c.compileExpr(e.X); /* */ $s = 28; case 28: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				$r = c.compileExpr(e.Y); /* */ $s = 29; case 29: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				c.emit(new sliceType$2([new div.constructor.elem(div)]));
 				$s = 21; continue;
-			/* } else if (_1 === (14)) { */ case 6:
+			/* } else if (_1 === (16)) { */ case 6:
 				$r = c.compileExpr(e.X); /* */ $s = 30; case 30: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				$r = c.compileExpr(e.Y); /* */ $s = 31; case 31: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				c.emit(new sliceType$2([new mod.constructor.elem(mod)]));
 				$s = 21; continue;
-			/* } else if (_1 === (15)) { */ case 7:
+			/* } else if (_1 === (17)) { */ case 7:
 				$r = c.compileExpr(e.X); /* */ $s = 32; case 32: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				$r = c.compileExpr(e.Y); /* */ $s = 33; case 33: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				c.emit(new sliceType$2([new and.constructor.elem(and)]));
 				$s = 21; continue;
-			/* } else if (_1 === (16)) { */ case 8:
+			/* } else if (_1 === (18)) { */ case 8:
 				$r = c.compileExpr(e.X); /* */ $s = 34; case 34: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				$r = c.compileExpr(e.Y); /* */ $s = 35; case 35: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				c.emit(new sliceType$2([new or.constructor.elem(or)]));
 				$s = 21; continue;
-			/* } else if (_1 === (17)) { */ case 9:
+			/* } else if (_1 === (19)) { */ case 9:
 				$r = c.compileExpr(e.X); /* */ $s = 36; case 36: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				$r = c.compileExpr(e.Y); /* */ $s = 37; case 37: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				c.emit(new sliceType$2([new xor.constructor.elem(xor)]));
 				$s = 21; continue;
-			/* } else if (_1 === (18)) { */ case 10:
+			/* } else if (_1 === (20)) { */ case 10:
 				$r = c.compileExpr(e.X); /* */ $s = 38; case 38: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				$r = c.compileExpr(e.Y); /* */ $s = 39; case 39: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				c.emit(new sliceType$2([new shl.constructor.elem(shl)]));
 				$s = 21; continue;
-			/* } else if (_1 === (19)) { */ case 11:
+			/* } else if (_1 === (21)) { */ case 11:
 				$r = c.compileExpr(e.X); /* */ $s = 40; case 40: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				$r = c.compileExpr(e.Y); /* */ $s = 41; case 41: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				c.emit(new sliceType$2([new shr.constructor.elem(shr)]));
 				$s = 21; continue;
-			/* } else if (_1 === (20)) { */ case 12:
+			/* } else if (_1 === (22)) { */ case 12:
 				$r = c.compileExpr(e.X); /* */ $s = 42; case 42: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				j = c.program.code.$length;
 				c.emit(new sliceType$2([$ifaceNil, new pop.constructor.elem(pop)]));
 				$r = c.compileExpr(e.Y); /* */ $s = 43; case 43: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				(x = c.program.code, ((j < 0 || j >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + j] = (new jneq1(0, (c.program.code.$length - j >> 0)))));
 				$s = 21; continue;
-			/* } else if (_1 === (21)) { */ case 13:
+			/* } else if (_1 === (23)) { */ case 13:
 				$r = c.compileExpr(e.X); /* */ $s = 44; case 44: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				j$1 = c.program.code.$length;
 				c.emit(new sliceType$2([$ifaceNil, new pop.constructor.elem(pop)]));
 				$r = c.compileExpr(e.Y); /* */ $s = 45; case 45: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				(x$1 = c.program.code, ((j$1 < 0 || j$1 >= x$1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$1.$array[x$1.$offset + j$1] = (new jeq1(0, (c.program.code.$length - j$1 >> 0)))));
 				$s = 21; continue;
-			/* } else if (_1 === (22)) { */ case 14:
+			/* } else if (_1 === (24)) { */ case 14:
 				$r = c.compileExpr(e.X); /* */ $s = 46; case 46: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				$r = c.compileExpr(e.Y); /* */ $s = 47; case 47: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				c.emit(new sliceType$2([new eq.constructor.elem(eq)]));
 				$s = 21; continue;
-			/* } else if (_1 === (23)) { */ case 15:
+			/* } else if (_1 === (25)) { */ case 15:
 				$r = c.compileExpr(e.X); /* */ $s = 48; case 48: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				$r = c.compileExpr(e.Y); /* */ $s = 49; case 49: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				c.emit(new sliceType$2([new lt.constructor.elem(lt)]));
 				$s = 21; continue;
-			/* } else if (_1 === (24)) { */ case 16:
+			/* } else if (_1 === (26)) { */ case 16:
 				$r = c.compileExpr(e.X); /* */ $s = 50; case 50: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				$r = c.compileExpr(e.Y); /* */ $s = 51; case 51: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				c.emit(new sliceType$2([new gt.constructor.elem(gt)]));
 				$s = 21; continue;
-			/* } else if (_1 === (26)) { */ case 17:
+			/* } else if (_1 === (28)) { */ case 17:
 				$r = c.compileExpr(e.X); /* */ $s = 52; case 52: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				$r = c.compileExpr(e.Y); /* */ $s = 53; case 53: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				c.emit(new sliceType$2([new neq.constructor.elem(neq)]));
 				$s = 21; continue;
-			/* } else if (_1 === (27)) { */ case 18:
+			/* } else if (_1 === (29)) { */ case 18:
 				$r = c.compileExpr(e.X); /* */ $s = 54; case 54: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				$r = c.compileExpr(e.Y); /* */ $s = 55; case 55: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				c.emit(new sliceType$2([new lte.constructor.elem(lte)]));
 				$s = 21; continue;
-			/* } else if (_1 === (28)) { */ case 19:
+			/* } else if (_1 === (30)) { */ case 19:
 				$r = c.compileExpr(e.X); /* */ $s = 56; case 56: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				$r = c.compileExpr(e.Y); /* */ $s = 57; case 57: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 				c.emit(new sliceType$2([new gte.constructor.elem(gte)]));
@@ -32588,68 +32912,73 @@ $packages["github.com/lujjjh/gates"] = (function() {
 	};
 	compiler.prototype.compileCallExpr = function(fun, args) { return this.$val.compileCallExpr(fun, args); };
 	compiler.ptr.prototype.compileExpr = function(e) {
-		var _r, _ref, c, e, e$1, e$10, e$11, e$2, e$3, e$4, e$5, e$6, e$7, e$8, e$9, x, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _ref = $f._ref; c = $f.c; e = $f.e; e$1 = $f.e$1; e$10 = $f.e$10; e$11 = $f.e$11; e$2 = $f.e$2; e$3 = $f.e$3; e$4 = $f.e$4; e$5 = $f.e$5; e$6 = $f.e$6; e$7 = $f.e$7; e$8 = $f.e$8; e$9 = $f.e$9; x = $f.x; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var _r, _ref, c, e, e$1, e$10, e$11, e$12, e$2, e$3, e$4, e$5, e$6, e$7, e$8, e$9, x, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _ref = $f._ref; c = $f.c; e = $f.e; e$1 = $f.e$1; e$10 = $f.e$10; e$11 = $f.e$11; e$12 = $f.e$12; e$2 = $f.e$2; e$3 = $f.e$3; e$4 = $f.e$4; e$5 = $f.e$5; e$6 = $f.e$6; e$7 = $f.e$7; e$8 = $f.e$8; e$9 = $f.e$9; x = $f.x; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		c = this;
 		_ref = e;
-		/* */ if ($assertType(_ref, ptrType$2, true)[1]) { $s = 1; continue; }
-		/* */ if ($assertType(_ref, ptrType$3, true)[1]) { $s = 2; continue; }
-		/* */ if ($assertType(_ref, ptrType$4, true)[1]) { $s = 3; continue; }
-		/* */ if ($assertType(_ref, ptrType$5, true)[1]) { $s = 4; continue; }
-		/* */ if ($assertType(_ref, ptrType$6, true)[1]) { $s = 5; continue; }
-		/* */ if ($assertType(_ref, ptrType$7, true)[1]) { $s = 6; continue; }
-		/* */ if ($assertType(_ref, ptrType$8, true)[1]) { $s = 7; continue; }
-		/* */ if ($assertType(_ref, ptrType$9, true)[1]) { $s = 8; continue; }
-		/* */ if ($assertType(_ref, ptrType$10, true)[1]) { $s = 9; continue; }
-		/* */ if ($assertType(_ref, ptrType$11, true)[1]) { $s = 10; continue; }
-		/* */ $s = 11; continue;
-		/* if ($assertType(_ref, ptrType$2, true)[1]) { */ case 1:
+		/* */ if ($assertType(_ref, ptrType$4, true)[1]) { $s = 1; continue; }
+		/* */ if ($assertType(_ref, ptrType$5, true)[1]) { $s = 2; continue; }
+		/* */ if ($assertType(_ref, ptrType$6, true)[1]) { $s = 3; continue; }
+		/* */ if ($assertType(_ref, ptrType$7, true)[1]) { $s = 4; continue; }
+		/* */ if ($assertType(_ref, ptrType$8, true)[1]) { $s = 5; continue; }
+		/* */ if ($assertType(_ref, ptrType$9, true)[1]) { $s = 6; continue; }
+		/* */ if ($assertType(_ref, ptrType$10, true)[1]) { $s = 7; continue; }
+		/* */ if ($assertType(_ref, ptrType$11, true)[1]) { $s = 8; continue; }
+		/* */ if ($assertType(_ref, ptrType$12, true)[1]) { $s = 9; continue; }
+		/* */ if ($assertType(_ref, ptrType$13, true)[1]) { $s = 10; continue; }
+		/* */ if ($assertType(_ref, ptrType$14, true)[1]) { $s = 11; continue; }
+		/* */ $s = 12; continue;
+		/* if ($assertType(_ref, ptrType$4, true)[1]) { */ case 1:
 			e$1 = _ref.$val;
-			$r = c.compileIdent(e$1); /* */ $s = 13; case 13: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-			$s = 12; continue;
-		/* } else if ($assertType(_ref, ptrType$3, true)[1]) { */ case 2:
+			$r = c.compileIdent(e$1); /* */ $s = 14; case 14: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			$s = 13; continue;
+		/* } else if ($assertType(_ref, ptrType$5, true)[1]) { */ case 2:
 			e$2 = _ref.$val;
-			$r = c.compileLit(e$2); /* */ $s = 14; case 14: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-			$s = 12; continue;
-		/* } else if ($assertType(_ref, ptrType$4, true)[1]) { */ case 3:
+			$r = c.compileLit(e$2); /* */ $s = 15; case 15: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			$s = 13; continue;
+		/* } else if ($assertType(_ref, ptrType$6, true)[1]) { */ case 3:
 			e$3 = _ref.$val;
-			$r = c.compileArrayLit(e$3); /* */ $s = 15; case 15: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-			$s = 12; continue;
-		/* } else if ($assertType(_ref, ptrType$5, true)[1]) { */ case 4:
+			$r = c.compileArrayLit(e$3); /* */ $s = 16; case 16: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			$s = 13; continue;
+		/* } else if ($assertType(_ref, ptrType$7, true)[1]) { */ case 4:
 			e$4 = _ref.$val;
-			$r = c.compileMapLit(e$4); /* */ $s = 16; case 16: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-			$s = 12; continue;
-		/* } else if ($assertType(_ref, ptrType$6, true)[1]) { */ case 5:
+			$r = c.compileMapLit(e$4); /* */ $s = 17; case 17: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			$s = 13; continue;
+		/* } else if ($assertType(_ref, ptrType$8, true)[1]) { */ case 5:
 			e$5 = _ref.$val;
-			$r = c.compileUnaryExpr(e$5); /* */ $s = 17; case 17: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-			$s = 12; continue;
-		/* } else if ($assertType(_ref, ptrType$7, true)[1]) { */ case 6:
+			$r = c.compileFunctionLit(e$5); /* */ $s = 18; case 18: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			$s = 13; continue;
+		/* } else if ($assertType(_ref, ptrType$9, true)[1]) { */ case 6:
 			e$6 = _ref.$val;
-			$r = c.compileBinaryExpr(e$6); /* */ $s = 18; case 18: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-			$s = 12; continue;
-		/* } else if ($assertType(_ref, ptrType$8, true)[1]) { */ case 7:
+			$r = c.compileUnaryExpr(e$6); /* */ $s = 19; case 19: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			$s = 13; continue;
+		/* } else if ($assertType(_ref, ptrType$10, true)[1]) { */ case 7:
 			e$7 = _ref.$val;
-			$r = c.compileExpr(e$7.X); /* */ $s = 19; case 19: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-			$s = 12; continue;
-		/* } else if ($assertType(_ref, ptrType$9, true)[1]) { */ case 8:
+			$r = c.compileBinaryExpr(e$7); /* */ $s = 20; case 20: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			$s = 13; continue;
+		/* } else if ($assertType(_ref, ptrType$11, true)[1]) { */ case 8:
 			e$8 = _ref.$val;
-			$r = c.compileSelectorExpr(e$8.X, (x = String(e$8.Sel.Name), new x.constructor.elem(x))); /* */ $s = 20; case 20: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-			$s = 12; continue;
-		/* } else if ($assertType(_ref, ptrType$10, true)[1]) { */ case 9:
+			$r = c.compileExpr(e$8.X); /* */ $s = 21; case 21: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			$s = 13; continue;
+		/* } else if ($assertType(_ref, ptrType$12, true)[1]) { */ case 9:
 			e$9 = _ref.$val;
-			$r = c.compileIndexExpr(e$9.X, e$9.Index); /* */ $s = 21; case 21: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-			$s = 12; continue;
-		/* } else if ($assertType(_ref, ptrType$11, true)[1]) { */ case 10:
+			$r = c.compileSelectorExpr(e$9.X, (x = String(e$9.Sel.Name), new x.constructor.elem(x))); /* */ $s = 22; case 22: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			$s = 13; continue;
+		/* } else if ($assertType(_ref, ptrType$13, true)[1]) { */ case 10:
 			e$10 = _ref.$val;
-			$r = c.compileCallExpr(e$10.Fun, e$10.Args); /* */ $s = 22; case 22: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-			$s = 12; continue;
-		/* } else { */ case 11:
-			e$11 = _ref;
-			_r = fmt.Errorf("unknown expression type: %T", new sliceType$1([e$11])); /* */ $s = 23; case 23: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+			$r = c.compileIndexExpr(e$10.X, e$10.Index); /* */ $s = 23; case 23: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			$s = 13; continue;
+		/* } else if ($assertType(_ref, ptrType$14, true)[1]) { */ case 11:
+			e$11 = _ref.$val;
+			$r = c.compileCallExpr(e$11.Fun, e$11.Args); /* */ $s = 24; case 24: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			$s = 13; continue;
+		/* } else { */ case 12:
+			e$12 = _ref;
+			_r = fmt.Errorf("unknown expression type: %T", new sliceType$1([e$12])); /* */ $s = 25; case 25: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 			$panic(_r);
-		/* } */ case 12:
+		/* } */ case 13:
 		$s = -1; return;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: compiler.ptr.prototype.compileExpr }; } $f._r = _r; $f._ref = _ref; $f.c = c; $f.e = e; $f.e$1 = e$1; $f.e$10 = e$10; $f.e$11 = e$11; $f.e$2 = e$2; $f.e$3 = e$3; $f.e$4 = e$4; $f.e$5 = e$5; $f.e$6 = e$6; $f.e$7 = e$7; $f.e$8 = e$8; $f.e$9 = e$9; $f.x = x; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: compiler.ptr.prototype.compileExpr }; } $f._r = _r; $f._ref = _ref; $f.c = c; $f.e = e; $f.e$1 = e$1; $f.e$10 = e$10; $f.e$11 = e$11; $f.e$12 = e$12; $f.e$2 = e$2; $f.e$3 = e$3; $f.e$4 = e$4; $f.e$5 = e$5; $f.e$6 = e$6; $f.e$7 = e$7; $f.e$8 = e$8; $f.e$9 = e$9; $f.x = x; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	compiler.prototype.compileExpr = function(e) { return this.$val.compileExpr(e); };
 	compiler.ptr.prototype.compile = function(e) {
@@ -32737,6 +33066,70 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		return f.Equals(other);
 	};
 	nativeFunction.prototype.SameAs = function(other) { return this.$val.SameAs(other); };
+	literalFunction.ptr.prototype.IsString = function() {
+		return false;
+	};
+	literalFunction.prototype.IsString = function() { return this.$val.IsString(); };
+	literalFunction.ptr.prototype.IsInt = function() {
+		return false;
+	};
+	literalFunction.prototype.IsInt = function() { return this.$val.IsInt(); };
+	literalFunction.ptr.prototype.IsFloat = function() {
+		return false;
+	};
+	literalFunction.prototype.IsFloat = function() { return this.$val.IsFloat(); };
+	literalFunction.ptr.prototype.IsBool = function() {
+		return false;
+	};
+	literalFunction.prototype.IsBool = function() { return this.$val.IsBool(); };
+	literalFunction.ptr.prototype.IsFunction = function() {
+		return true;
+	};
+	literalFunction.prototype.IsFunction = function() { return this.$val.IsFunction(); };
+	literalFunction.ptr.prototype.ToString = function() {
+		return "function () {}";
+	};
+	literalFunction.prototype.ToString = function() { return this.$val.ToString(); };
+	literalFunction.ptr.prototype.ToInt = function() {
+		return new $Int64(0, 0);
+	};
+	literalFunction.prototype.ToInt = function() { return this.$val.ToInt(); };
+	literalFunction.ptr.prototype.ToFloat = function() {
+		return math.NaN();
+	};
+	literalFunction.prototype.ToFloat = function() { return this.$val.ToFloat(); };
+	literalFunction.ptr.prototype.ToNumber = function() {
+		return new Int(0, 0);
+	};
+	literalFunction.prototype.ToNumber = function() { return this.$val.ToNumber(); };
+	literalFunction.ptr.prototype.ToBool = function() {
+		return true;
+	};
+	literalFunction.prototype.ToBool = function() { return this.$val.ToBool(); };
+	literalFunction.ptr.prototype.ToFunction = function() {
+		var f;
+		f = this;
+		return f;
+	};
+	literalFunction.prototype.ToFunction = function() { return this.$val.ToFunction(); };
+	literalFunction.ptr.prototype.ToNative = function() {
+		var f;
+		f = this;
+		return $ifaceNil;
+	};
+	literalFunction.prototype.ToNative = function() { return this.$val.ToNative(); };
+	literalFunction.ptr.prototype.Equals = function(other) {
+		var f, other;
+		f = this;
+		return $interfaceIsEqual((f), (other));
+	};
+	literalFunction.prototype.Equals = function(other) { return this.$val.Equals(other); };
+	literalFunction.ptr.prototype.SameAs = function(other) {
+		var f, other;
+		f = this;
+		return f.Equals(other);
+	};
+	literalFunction.prototype.SameAs = function(other) { return this.$val.SameAs(other); };
 	NewGlobal = function() {
 		return new Global.ptr({});
 	};
@@ -32900,7 +33293,7 @@ $packages["github.com/lujjjh/gates"] = (function() {
 	_Null.ptr.prototype.ToString = function() {
 		var n;
 		n = this;
-		return "null";
+		return "";
 	};
 	_Null.prototype.ToString = function() { return this.$val.ToString(); };
 	_Null.ptr.prototype.ToInt = function() {
@@ -32938,16 +33331,9 @@ $packages["github.com/lujjjh/gates"] = (function() {
 	};
 	_Null.prototype.ToNative = function() { return this.$val.ToNative(); };
 	_Null.ptr.prototype.Equals = function(other) {
-		var _r, _r$1, n, other, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; n = $f.n; other = $f.other; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var n, other;
 		n = this;
-		if ($interfaceIsEqual(other, new $pkg.Null.constructor.elem($pkg.Null))) {
-			$s = -1; return true;
-		}
-		_r = other.ToNumber(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		_r$1 = _r.Equals(new Int(0, 0)); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-		$s = -1; return _r$1;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: _Null.ptr.prototype.Equals }; } $f._r = _r; $f._r$1 = _r$1; $f.n = n; $f.other = other; $f.$s = $s; $f.$r = $r; return $f;
+		return $interfaceIsEqual(other, new $pkg.Null.constructor.elem($pkg.Null));
 	};
 	_Null.prototype.Equals = function(other) { return this.$val.Equals(other); };
 	_Null.ptr.prototype.SameAs = function(other) {
@@ -33328,20 +33714,20 @@ $packages["github.com/lujjjh/gates"] = (function() {
 	Compile = function(x) {
 		var _r, _tmp, _tmp$1, _tmp$2, _tmp$3, _tuple, compiler$1, e, err, program, x, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; _tmp$2 = $f._tmp$2; _tmp$3 = $f._tmp$3; _tuple = $f._tuple; compiler$1 = $f.compiler$1; e = $f.e; err = $f.err; program = $f.program; x = $f.x; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		program = ptrType$12.nil;
+		program = ptrType$15.nil;
 		err = $ifaceNil;
 		_r = syntax.ParseExpr(x); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_tuple = _r;
 		e = _tuple[0];
 		err = _tuple[1];
 		if (!($interfaceIsEqual(err, $ifaceNil))) {
-			_tmp = ptrType$12.nil;
+			_tmp = ptrType$15.nil;
 			_tmp$1 = err;
 			program = _tmp;
 			err = _tmp$1;
 			$s = -1; return [program, err];
 		}
-		compiler$1 = new compiler.ptr(new Program.ptr(sliceType$2.nil, sliceType$3.nil));
+		compiler$1 = new compiler.ptr(new Program.ptr(sliceType$2.nil, sliceType$3.nil), ptrType$3.nil);
 		$r = compiler$1.compile(e); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		_tmp$2 = compiler$1.program;
 		_tmp$3 = $ifaceNil;
@@ -33361,7 +33747,7 @@ $packages["github.com/lujjjh/gates"] = (function() {
 	Runtime.ptr.prototype.init = function() {
 		var r;
 		r = this;
-		r.vm = new vm.ptr(r, false, 0, new valueStack.ptr(sliceType$3.nil, 0), ptrType$12.nil);
+		r.vm = new vm.ptr(r, false, 0, new valueStack.ptr(sliceType$3.nil, 0), 0, ptrType$15.nil);
 		r.vm.init();
 		r.global = NewGlobal();
 	};
@@ -33469,6 +33855,52 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		}
 	};
 	Runtime.prototype.ToValue = function(i) { return this.$val.ToValue(i); };
+	newScope = function(outer) {
+		var outer, s;
+		s = new scope.ptr(false, ptrType$3.nil);
+		s.init(outer);
+		return s;
+	};
+	scope.ptr.prototype.init = function(outer) {
+		var outer, s;
+		s = this;
+		s.names = {};
+		s.outer = outer;
+	};
+	scope.prototype.init = function(outer) { return this.$val.init(outer); };
+	scope.ptr.prototype.lookupName = function(name) {
+		var _entry, _tuple, current, i, level, name, ok, s;
+		s = this;
+		level = 0;
+		current = s;
+		while (true) {
+			if (!(!(current === ptrType$3.nil))) { break; }
+			_tuple = (_entry = current.names[$String.keyFor(name)], _entry !== undefined ? [_entry.v, true] : [0, false]);
+			i = _tuple[0];
+			ok = _tuple[1];
+			if (ok) {
+				return [(i | ((level << 24 >>> 0))) >>> 0, true];
+			}
+			level = level + (1) >>> 0;
+			current = current.outer;
+		}
+		return [0, false];
+	};
+	scope.prototype.lookupName = function(name) { return this.$val.lookupName(name); };
+	scope.ptr.prototype.bindName = function(name) {
+		var _entry, _key, _tuple, idx, idx$1, name, ok, s;
+		s = this;
+		_tuple = (_entry = s.names[$String.keyFor(name)], _entry !== undefined ? [_entry.v, true] : [0, false]);
+		idx = _tuple[0];
+		ok = _tuple[1];
+		if (ok) {
+			return idx;
+		}
+		idx$1 = (($keys(s.names).length >>> 0));
+		_key = name; (s.names || $throwRuntimeError("assignment to entry in nil map"))[$String.keyFor(_key)] = { k: _key, v: idx$1 };
+		return idx$1;
+	};
+	scope.prototype.bindName = function(name) { return this.$val.bindName(name); };
 	String = function(s) {
 		var s;
 		return new _String.ptr(s);
@@ -33737,12 +34169,72 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		vm$1.pc = vm$1.pc + (1) >> 0;
 	};
 	$ptrType(load).prototype.exec = function(vm$1) { return new load(this.$get()).exec(vm$1); };
+	_loadNull.ptr.prototype.exec = function(vm$1) {
+		var vm$1;
+		vm$1.stack.Push(new $pkg.Null.constructor.elem($pkg.Null));
+		vm$1.pc = vm$1.pc + (1) >> 0;
+	};
+	_loadNull.prototype.exec = function(vm$1) { return this.$val.exec(vm$1); };
 	_loadGlobal.ptr.prototype.exec = function(vm$1) {
 		var vm$1;
 		vm$1.stack.Push(new Map(vm$1.r.global.m));
 		vm$1.pc = vm$1.pc + (1) >> 0;
 	};
 	_loadGlobal.prototype.exec = function(vm$1) { return this.$val.exec(vm$1); };
+	loadStack.prototype.exec = function(vm$1) {
+		var _r, argc, argn, bp, idx, l, vm$1, x, x$1, x$2, x$3, x$4, x$5, x$6, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; argc = $f.argc; argn = $f.argn; bp = $f.bp; idx = $f.idx; l = $f.l; vm$1 = $f.vm$1; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; x$3 = $f.x$3; x$4 = $f.x$4; x$5 = $f.x$5; x$6 = $f.x$6; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		l = this.$val;
+		idx = ((l >> 0));
+		bp = vm$1.bp;
+		/* */ if (l < 0) { $s = 1; continue; }
+		/* */ $s = 2; continue;
+		/* if (l < 0) { */ case 1:
+			_r = (x$1 = vm$1.stack.l, x$2 = bp - 3 >> 0, ((x$2 < 0 || x$2 >= x$1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$1.$array[x$1.$offset + x$2])).ToInt(); /* */ $s = 4; case 4: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+			argc = (((x = _r, x.$low + ((x.$high >> 31) * 4294967296)) >> 0));
+			argn = -idx - 1 >> 0;
+			if (argn >= argc) {
+				vm$1.stack.Push(new $pkg.Null.constructor.elem($pkg.Null));
+			} else {
+				vm$1.stack.Push((x$3 = vm$1.stack.l, x$4 = ((bp - 3 >> 0) - argc >> 0) + argn >> 0, ((x$4 < 0 || x$4 >= x$3.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$3.$array[x$3.$offset + x$4])));
+			}
+			$s = 3; continue;
+		/* } else { */ case 2:
+			vm$1.stack.Push((x$5 = vm$1.stack.l, x$6 = bp + idx >> 0, ((x$6 < 0 || x$6 >= x$5.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$5.$array[x$5.$offset + x$6])));
+		/* } */ case 3:
+		vm$1.pc = vm$1.pc + (1) >> 0;
+		$s = -1; return;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: loadStack.prototype.exec }; } $f._r = _r; $f.argc = argc; $f.argn = argn; $f.bp = bp; $f.idx = idx; $f.l = l; $f.vm$1 = vm$1; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.x$3 = x$3; $f.x$4 = x$4; $f.x$5 = x$5; $f.x$6 = x$6; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	$ptrType(loadStack).prototype.exec = function(vm$1) { return new loadStack(this.$get()).exec(vm$1); };
+	storeStack.prototype.exec = function(vm$1) {
+		var bp, idx, s, vm$1, x, x$1;
+		s = this.$val;
+		idx = ((s >> 0));
+		bp = vm$1.bp;
+		(x = vm$1.stack.l, x$1 = bp + idx >> 0, ((x$1 < 0 || x$1 >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + x$1] = vm$1.stack.Pop()));
+		vm$1.pc = vm$1.pc + (1) >> 0;
+	};
+	$ptrType(storeStack).prototype.exec = function(vm$1) { return new storeStack(this.$get()).exec(vm$1); };
+	loadLocal.prototype.exec = function(vm$1) {
+		var _r, bp, idx, l, level, vm$1, x, x$1, x$2, x$3, x$4, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; bp = $f.bp; idx = $f.idx; l = $f.l; level = $f.level; vm$1 = $f.vm$1; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; x$3 = $f.x$3; x$4 = $f.x$4; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		l = this.$val;
+		level = l >>> 24 >>> 0;
+		idx = ((((l & 16777215) >>> 0) >> 0));
+		bp = vm$1.bp;
+		/* while (true) { */ case 1:
+			/* if (!(level > 0)) { break; } */ if(!(level > 0)) { $s = 2; continue; }
+			_r = (x$1 = vm$1.stack.l, x$2 = bp - 2 >> 0, ((x$2 < 0 || x$2 >= x$1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$1.$array[x$1.$offset + x$2])).ToInt(); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+			bp = (((x = _r, x.$low + ((x.$high >> 31) * 4294967296)) >> 0));
+			level = level - (1) >>> 0;
+		/* } */ $s = 1; continue; case 2:
+		vm$1.stack.Push((x$3 = vm$1.stack.l, x$4 = bp + idx >> 0, ((x$4 < 0 || x$4 >= x$3.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$3.$array[x$3.$offset + x$4])));
+		vm$1.pc = vm$1.pc + (1) >> 0;
+		$s = -1; return;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: loadLocal.prototype.exec }; } $f._r = _r; $f.bp = bp; $f.idx = idx; $f.l = l; $f.level = level; $f.vm$1 = vm$1; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.x$3 = x$3; $f.x$4 = x$4; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	$ptrType(loadLocal).prototype.exec = function(vm$1) { return new loadLocal(this.$get()).exec(vm$1); };
 	_pop.ptr.prototype.exec = function(vm$1) {
 		var vm$1;
 		vm$1.stack.Pop();
@@ -33780,6 +34272,16 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: newMap.prototype.exec }; } $f._key = _key; $f._r = _r; $f.i = i; $f.key = key; $f.kvs = kvs; $f.l = l; $f.ll = ll; $f.m = m; $f.value = value; $f.vm$1 = vm$1; $f.x = x; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$ptrType(newMap).prototype.exec = function(vm$1) { return new newMap(this.$get()).exec(vm$1); };
+	newFunc.prototype.exec = function(vm$1) {
+		var f, l, pc, stackSize, vm$1;
+		l = this.$val;
+		pc = ((((l & 16777215) >>> 0) >> 0));
+		stackSize = (((l >>> 24 >>> 0) >> 0));
+		f = new literalFunction.ptr(pc, stackSize);
+		vm$1.stack.Push(f);
+		vm$1.pc = vm$1.pc + (1) >> 0;
+	};
+	$ptrType(newFunc).prototype.exec = function(vm$1) { return new newFunc(this.$get()).exec(vm$1); };
 	_get.ptr.prototype.exec = function(vm$1) {
 		var _r, base, key, vm$1, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; base = $f.base; key = $f.key; vm$1 = $f.vm$1; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
@@ -33792,6 +34294,12 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: _get.ptr.prototype.exec }; } $f._r = _r; $f.base = base; $f.key = key; $f.vm$1 = vm$1; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	_get.prototype.exec = function(vm$1) { return this.$val.exec(vm$1); };
+	jmp1.prototype.exec = function(vm$1) {
+		var j, vm$1;
+		j = this;
+		vm$1.pc = vm$1.pc + ((((j.$low + ((j.$high >> 31) * 4294967296)) >> 0))) >> 0;
+	};
+	$ptrType(jmp1).prototype.exec = function(vm$1) { return this.$get().exec(vm$1); };
 	jeq1.prototype.exec = function(vm$1) {
 		var _r, j, vm$1, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; j = $f.j; vm$1 = $f.vm$1; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
@@ -34200,61 +34708,105 @@ $packages["github.com/lujjjh/gates"] = (function() {
 	};
 	_gte.prototype.exec = function(vm$1) { return this.$val.exec(vm$1); };
 	_call.ptr.prototype.exec = function(vm$1) {
-		var _r, _r$1, _r$2, _r$3, _ref, argc, args, f, f$1, fc, fun, i, vm$1, x, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _ref = $f._ref; argc = $f.argc; args = $f.args; f = $f.f; f$1 = $f.f$1; fc = $f.fc; fun = $f.fun; i = $f.i; vm$1 = $f.vm$1; x = $f.x; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var _r, _r$1, _r$2, _r$3, _ref, argc, args, bp, f, f$1, f$2, fc, fun, i, i$1, pc, vm$1, x, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _ref = $f._ref; argc = $f.argc; args = $f.args; bp = $f.bp; f = $f.f; f$1 = $f.f$1; f$2 = $f.f$2; fc = $f.fc; fun = $f.fun; i = $f.i; i$1 = $f.i$1; pc = $f.pc; vm$1 = $f.vm$1; x = $f.x; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		_r = vm$1.stack.Pop().ToFunction(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		fun = _r;
-		_r$1 = vm$1.stack.Pop().ToInt(); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-		argc = _r$1;
-		args = $makeSlice(sliceType$3, $flatten64(argc));
-		i = new $Int64(argc.$high - 0, argc.$low - 1);
-		while (true) {
-			if (!((i.$high > 0 || (i.$high === 0 && i.$low >= 0)))) { break; }
-			(($flatten64(i) < 0 || $flatten64(i) >= args.$length) ? ($throwRuntimeError("index out of range"), undefined) : args.$array[args.$offset + $flatten64(i)] = vm$1.stack.Pop());
-			i = (x = new $Int64(0, 1), new $Int64(i.$high - x.$high, i.$low - x.$low));
-		}
-		fc = new functionCall.ptr(args);
 		_ref = fun;
-		/* */ if ($assertType(_ref, ptrType$14, true)[1]) { $s = 3; continue; }
+		/* */ if ($assertType(_ref, ptrType$17, true)[1]) { $s = 2; continue; }
+		/* */ if ($assertType(_ref, ptrType$18, true)[1]) { $s = 3; continue; }
 		/* */ $s = 4; continue;
-		/* if ($assertType(_ref, ptrType$14, true)[1]) { */ case 3:
+		/* if ($assertType(_ref, ptrType$17, true)[1]) { */ case 2:
 			f = _ref.$val;
-			_r$2 = f.fun(fc); /* */ $s = 6; case 6: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
-			$r = vm$1.stack.Push(_r$2); /* */ $s = 7; case 7: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			_r$1 = vm$1.stack.Pop().ToInt(); /* */ $s = 6; case 6: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+			argc = _r$1;
+			args = $makeSlice(sliceType$3, $flatten64(argc));
+			i = new $Int64(argc.$high - 0, argc.$low - 1);
+			while (true) {
+				if (!((i.$high > 0 || (i.$high === 0 && i.$low >= 0)))) { break; }
+				(($flatten64(i) < 0 || $flatten64(i) >= args.$length) ? ($throwRuntimeError("index out of range"), undefined) : args.$array[args.$offset + $flatten64(i)] = vm$1.stack.Pop());
+				i = (x = new $Int64(0, 1), new $Int64(i.$high - x.$high, i.$low - x.$low));
+			}
+			fc = new functionCall.ptr(args);
+			_r$2 = f.fun(fc); /* */ $s = 7; case 7: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+			$r = vm$1.stack.Push(_r$2); /* */ $s = 8; case 8: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 			vm$1.pc = vm$1.pc + (1) >> 0;
 			$s = 5; continue;
+		/* } else if ($assertType(_ref, ptrType$18, true)[1]) { */ case 3:
+			f$1 = _ref.$val;
+			bp = vm$1.bp;
+			pc = vm$1.pc;
+			vm$1.stack.Push((new Int(0, bp)));
+			vm$1.stack.Push((new Int(0, pc)));
+			vm$1.bp = vm$1.stack.sp;
+			i$1 = 0;
+			while (true) {
+				if (!(i$1 < f$1.stackSize)) { break; }
+				vm$1.stack.Push(new $pkg.Null.constructor.elem($pkg.Null));
+				i$1 = i$1 + (1) >> 0;
+			}
+			vm$1.pc = f$1.pc;
+			$s = 5; continue;
 		/* } else { */ case 4:
-			f$1 = _ref;
-			_r$3 = fmt.Errorf("unsupported function type: %T", new sliceType$1([fun])); /* */ $s = 8; case 8: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+			f$2 = _ref;
+			_r$3 = fmt.Errorf("unsupported function type: %T", new sliceType$1([fun])); /* */ $s = 9; case 9: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
 			$panic(_r$3);
 		/* } */ case 5:
 		$s = -1; return;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: _call.ptr.prototype.exec }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._ref = _ref; $f.argc = argc; $f.args = args; $f.f = f; $f.f$1 = f$1; $f.fc = fc; $f.fun = fun; $f.i = i; $f.vm$1 = vm$1; $f.x = x; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: _call.ptr.prototype.exec }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._ref = _ref; $f.argc = argc; $f.args = args; $f.bp = bp; $f.f = f; $f.f$1 = f$1; $f.f$2 = f$2; $f.fc = fc; $f.fun = fun; $f.i = i; $f.i$1 = i$1; $f.pc = pc; $f.vm$1 = vm$1; $f.x = x; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	_call.prototype.exec = function(vm$1) { return this.$val.exec(vm$1); };
-	Array.methods = [{prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "Get", name: "Get", pkg: "", typ: $funcType([ptrType$13, Value], [Value], false)}];
+	_ret.ptr.prototype.exec = function(vm$1) {
+		var _r, _r$1, _r$2, argc, bp, pc, returnValue, vm$1, x, x$1, x$2, x$3, x$4, x$5, x$6, x$7, x$8, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; argc = $f.argc; bp = $f.bp; pc = $f.pc; returnValue = $f.returnValue; vm$1 = $f.vm$1; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; x$3 = $f.x$3; x$4 = $f.x$4; x$5 = $f.x$5; x$6 = $f.x$6; x$7 = $f.x$7; x$8 = $f.x$8; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		_r = (x$1 = vm$1.stack.l, x$2 = vm$1.bp - 1 >> 0, ((x$2 < 0 || x$2 >= x$1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$1.$array[x$1.$offset + x$2])).ToInt(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		pc = (((x = _r, x.$low + ((x.$high >> 31) * 4294967296)) >> 0));
+		_r$1 = (x$4 = vm$1.stack.l, x$5 = vm$1.bp - 2 >> 0, ((x$5 < 0 || x$5 >= x$4.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$4.$array[x$4.$offset + x$5])).ToInt(); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+		bp = (((x$3 = _r$1, x$3.$low + ((x$3.$high >> 31) * 4294967296)) >> 0));
+		_r$2 = (x$7 = vm$1.stack.l, x$8 = vm$1.bp - 3 >> 0, ((x$8 < 0 || x$8 >= x$7.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$7.$array[x$7.$offset + x$8])).ToInt(); /* */ $s = 3; case 3: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		argc = (((x$6 = _r$2, x$6.$low + ((x$6.$high >> 31) * 4294967296)) >> 0));
+		returnValue = vm$1.stack.Pop();
+		vm$1.stack.sp = (vm$1.bp - 3 >> 0) - argc >> 0;
+		vm$1.stack.l = $subslice(vm$1.stack.l, 0, vm$1.stack.sp);
+		vm$1.stack.Push(returnValue);
+		vm$1.pc = pc;
+		vm$1.bp = bp;
+		vm$1.pc = vm$1.pc + (1) >> 0;
+		$s = -1; return;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: _ret.ptr.prototype.exec }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f.argc = argc; $f.bp = bp; $f.pc = pc; $f.returnValue = returnValue; $f.vm$1 = vm$1; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.x$3 = x$3; $f.x$4 = x$4; $f.x$5 = x$5; $f.x$6 = x$6; $f.x$7 = x$7; $f.x$8 = x$8; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	_ret.prototype.exec = function(vm$1) { return this.$val.exec(vm$1); };
+	Array.methods = [{prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "Get", name: "Get", pkg: "", typ: $funcType([ptrType$16, Value], [Value], false)}];
 	Bool.methods = [{prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}];
-	ptrType$15.methods = [{prop: "emit", name: "emit", pkg: "github.com/lujjjh/gates", typ: $funcType([sliceType$2], [], true)}, {prop: "compileIdent", name: "compileIdent", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$2], [], false)}, {prop: "compileLit", name: "compileLit", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$3], [], false)}, {prop: "compileArrayLit", name: "compileArrayLit", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$4], [], false)}, {prop: "compileMapLit", name: "compileMapLit", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$5], [], false)}, {prop: "compileUnaryExpr", name: "compileUnaryExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$6], [], false)}, {prop: "compileBinaryExpr", name: "compileBinaryExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$7], [], false)}, {prop: "compileSelectorExpr", name: "compileSelectorExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Expr, Value], [], false)}, {prop: "compileIndexExpr", name: "compileIndexExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Expr, syntax.Expr], [], false)}, {prop: "compileCallExpr", name: "compileCallExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Expr, sliceType$4], [], false)}, {prop: "compileExpr", name: "compileExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Expr], [], false)}, {prop: "compile", name: "compile", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Expr], [], false)}];
-	ptrType$16.methods = [{prop: "Args", name: "Args", pkg: "", typ: $funcType([], [sliceType$3], false)}];
-	ptrType$14.methods = [{prop: "function$", name: "function", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}, {prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}];
+	ptrType$19.methods = [{prop: "emit", name: "emit", pkg: "github.com/lujjjh/gates", typ: $funcType([sliceType$2], [], true)}, {prop: "compileReturnStmt", name: "compileReturnStmt", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$2], [], false)}, {prop: "compileStmt", name: "compileStmt", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Stmt], [], false)}, {prop: "compileIdent", name: "compileIdent", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$4], [], false)}, {prop: "compileLit", name: "compileLit", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$5], [], false)}, {prop: "compileArrayLit", name: "compileArrayLit", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$6], [], false)}, {prop: "compileMapLit", name: "compileMapLit", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$7], [], false)}, {prop: "compileFunctionLit", name: "compileFunctionLit", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$8], [], false)}, {prop: "compileUnaryExpr", name: "compileUnaryExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$9], [], false)}, {prop: "compileBinaryExpr", name: "compileBinaryExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$10], [], false)}, {prop: "compileSelectorExpr", name: "compileSelectorExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Expr, Value], [], false)}, {prop: "compileIndexExpr", name: "compileIndexExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Expr, syntax.Expr], [], false)}, {prop: "compileCallExpr", name: "compileCallExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Expr, sliceType$4], [], false)}, {prop: "compileExpr", name: "compileExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Expr], [], false)}, {prop: "compile", name: "compile", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Expr], [], false)}];
+	ptrType$20.methods = [{prop: "Args", name: "Args", pkg: "", typ: $funcType([], [sliceType$3], false)}];
+	ptrType$17.methods = [{prop: "function$", name: "function", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}, {prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}];
+	ptrType$18.methods = [{prop: "function$", name: "function", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}, {prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}];
 	ptrType$1.methods = [{prop: "Set", name: "Set", pkg: "", typ: $funcType([$String, Value], [], false)}, {prop: "Get", name: "Get", pkg: "", typ: $funcType([$String], [Value], false)}, {prop: "InitBuiltIns", name: "InitBuiltIns", pkg: "", typ: $funcType([], [], false)}];
-	Map.methods = [{prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "Get", name: "Get", pkg: "", typ: $funcType([ptrType$13, Value], [Value], false)}];
+	Map.methods = [{prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "Get", name: "Get", pkg: "", typ: $funcType([ptrType$16, Value], [Value], false)}];
 	_Null.methods = [{prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}];
 	Int.methods = [{prop: "number", name: "number", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}, {prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}];
 	Float.methods = [{prop: "number", name: "number", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}, {prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}];
-	ptrType$12.methods = [{prop: "defineLit", name: "defineLit", pkg: "github.com/lujjjh/gates", typ: $funcType([Value], [$Uint], false)}];
+	ptrType$15.methods = [{prop: "defineLit", name: "defineLit", pkg: "github.com/lujjjh/gates", typ: $funcType([Value], [$Uint], false)}];
 	Ref.methods = [{prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}];
-	ptrType$13.methods = [{prop: "init", name: "init", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}, {prop: "Global", name: "Global", pkg: "", typ: $funcType([], [ptrType$1], false)}, {prop: "Reset", name: "Reset", pkg: "", typ: $funcType([], [], false)}, {prop: "RunProgram", name: "RunProgram", pkg: "", typ: $funcType([ptrType$12], [Value], false)}, {prop: "RunString", name: "RunString", pkg: "", typ: $funcType([$String], [Value, $error], false)}, {prop: "ToValue", name: "ToValue", pkg: "", typ: $funcType([$emptyInterface], [Value], false)}];
-	_String.methods = [{prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "Get", name: "Get", pkg: "", typ: $funcType([ptrType$13, Value], [Value], false)}];
-	ptrType$17.methods = [{prop: "init", name: "init", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}, {prop: "expand", name: "expand", pkg: "github.com/lujjjh/gates", typ: $funcType([$Int], [], false)}, {prop: "Push", name: "Push", pkg: "", typ: $funcType([Value], [], false)}, {prop: "Peek", name: "Peek", pkg: "", typ: $funcType([], [Value], false)}, {prop: "Pop", name: "Pop", pkg: "", typ: $funcType([], [Value], false)}, {prop: "PopN", name: "PopN", pkg: "", typ: $funcType([$Int], [sliceType$3], false)}];
+	ptrType$16.methods = [{prop: "init", name: "init", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}, {prop: "Global", name: "Global", pkg: "", typ: $funcType([], [ptrType$1], false)}, {prop: "Reset", name: "Reset", pkg: "", typ: $funcType([], [], false)}, {prop: "RunProgram", name: "RunProgram", pkg: "", typ: $funcType([ptrType$15], [Value], false)}, {prop: "RunString", name: "RunString", pkg: "", typ: $funcType([$String], [Value, $error], false)}, {prop: "ToValue", name: "ToValue", pkg: "", typ: $funcType([$emptyInterface], [Value], false)}];
+	ptrType$3.methods = [{prop: "init", name: "init", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$3], [], false)}, {prop: "lookupName", name: "lookupName", pkg: "github.com/lujjjh/gates", typ: $funcType([$String], [$Uint32, $Bool], false)}, {prop: "bindName", name: "bindName", pkg: "github.com/lujjjh/gates", typ: $funcType([$String], [$Uint32], false)}];
+	_String.methods = [{prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "Get", name: "Get", pkg: "", typ: $funcType([ptrType$16, Value], [Value], false)}];
+	ptrType$21.methods = [{prop: "init", name: "init", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}, {prop: "expand", name: "expand", pkg: "github.com/lujjjh/gates", typ: $funcType([$Int], [], false)}, {prop: "Push", name: "Push", pkg: "", typ: $funcType([Value], [], false)}, {prop: "Peek", name: "Peek", pkg: "", typ: $funcType([], [Value], false)}, {prop: "Pop", name: "Pop", pkg: "", typ: $funcType([], [Value], false)}, {prop: "PopN", name: "PopN", pkg: "", typ: $funcType([$Int], [sliceType$3], false)}];
 	ptrType.methods = [{prop: "init", name: "init", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}, {prop: "run", name: "run", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}];
 	_halt.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
 	load.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
+	_loadNull.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
 	_loadGlobal.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
+	loadStack.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
+	storeStack.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
+	loadLocal.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
 	_pop.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
 	newArray.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
 	newMap.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
+	newFunc.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
 	_get.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
+	jmp1.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
 	jeq1.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
 	jneq1.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
 	_plus.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
@@ -34277,26 +34829,30 @@ $packages["github.com/lujjjh/gates"] = (function() {
 	_gt.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
 	_gte.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
 	_call.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
+	_ret.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
 	Array.init(Value);
-	compiler.init("github.com/lujjjh/gates", [{prop: "program", name: "program", embedded: false, exported: false, typ: ptrType$12, tag: ""}]);
+	compiler.init("github.com/lujjjh/gates", [{prop: "program", name: "program", embedded: false, exported: false, typ: ptrType$15, tag: ""}, {prop: "scope", name: "scope", embedded: false, exported: false, typ: ptrType$3, tag: ""}]);
 	Function.init([{prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "function", name: "function", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}]);
 	FunctionCall.init([{prop: "Args", name: "Args", pkg: "", typ: $funcType([], [sliceType$3], false)}]);
 	functionCall.init("github.com/lujjjh/gates", [{prop: "args", name: "args", embedded: false, exported: false, typ: sliceType$3, tag: ""}]);
 	nativeFunction.init("github.com/lujjjh/gates", [{prop: "fun", name: "fun", embedded: false, exported: false, typ: funcType, tag: ""}]);
+	literalFunction.init("github.com/lujjjh/gates", [{prop: "pc", name: "pc", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "stackSize", name: "stackSize", embedded: false, exported: false, typ: $Int, tag: ""}]);
 	Global.init("github.com/lujjjh/gates", [{prop: "m", name: "m", embedded: false, exported: false, typ: Map, tag: ""}]);
 	Map.init($String, Value);
 	_Null.init("", []);
 	Number.init([{prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "number", name: "number", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}]);
-	getter.init([{prop: "Get", name: "Get", pkg: "", typ: $funcType([ptrType$13, Value], [Value], false)}]);
+	getter.init([{prop: "Get", name: "Get", pkg: "", typ: $funcType([ptrType$16, Value], [Value], false)}]);
 	Program.init("github.com/lujjjh/gates", [{prop: "code", name: "code", embedded: false, exported: false, typ: sliceType$2, tag: ""}, {prop: "values", name: "values", embedded: false, exported: false, typ: sliceType$3, tag: ""}]);
 	Ref.init("github.com/lujjjh/gates", [{prop: "v", name: "v", embedded: false, exported: false, typ: $emptyInterface, tag: ""}]);
 	Runtime.init("github.com/lujjjh/gates", [{prop: "vm", name: "vm", embedded: false, exported: false, typ: ptrType, tag: ""}, {prop: "global", name: "global", embedded: false, exported: false, typ: ptrType$1, tag: ""}]);
+	scope.init("github.com/lujjjh/gates", [{prop: "names", name: "names", embedded: false, exported: false, typ: mapType$2, tag: ""}, {prop: "outer", name: "outer", embedded: false, exported: false, typ: ptrType$3, tag: ""}]);
 	_String.init("github.com/lujjjh/gates", [{prop: "s", name: "s", embedded: false, exported: false, typ: $String, tag: ""}]);
 	Value.init([{prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}]);
 	valueStack.init("github.com/lujjjh/gates", [{prop: "l", name: "l", embedded: false, exported: false, typ: sliceType$3, tag: ""}, {prop: "sp", name: "sp", embedded: false, exported: false, typ: $Int, tag: ""}]);
-	vm.init("github.com/lujjjh/gates", [{prop: "r", name: "r", embedded: false, exported: false, typ: ptrType$13, tag: ""}, {prop: "halt", name: "halt", embedded: false, exported: false, typ: $Bool, tag: ""}, {prop: "pc", name: "pc", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "stack", name: "stack", embedded: false, exported: false, typ: valueStack, tag: ""}, {prop: "program", name: "program", embedded: false, exported: false, typ: ptrType$12, tag: ""}]);
+	vm.init("github.com/lujjjh/gates", [{prop: "r", name: "r", embedded: false, exported: false, typ: ptrType$16, tag: ""}, {prop: "halt", name: "halt", embedded: false, exported: false, typ: $Bool, tag: ""}, {prop: "pc", name: "pc", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "stack", name: "stack", embedded: false, exported: false, typ: valueStack, tag: ""}, {prop: "bp", name: "bp", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "program", name: "program", embedded: false, exported: false, typ: ptrType$15, tag: ""}]);
 	instruction.init([{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}]);
 	_halt.init("", []);
+	_loadNull.init("", []);
 	_loadGlobal.init("", []);
 	_pop.init("", []);
 	_get.init("", []);
@@ -34320,6 +34876,7 @@ $packages["github.com/lujjjh/gates"] = (function() {
 	_gt.init("", []);
 	_gte.init("", []);
 	_call.init("", []);
+	_ret.init("", []);
 	$init = function() {
 		$pkg.$init = function() {};
 		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
@@ -34333,6 +34890,7 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		sharedRuntime = new Runtime.ptr(ptrType.nil, ptrType$1.nil);
 		$pkg.Null = new _Null.ptr();
 		halt = new _halt.ptr();
+		loadNull = new _loadNull.ptr();
 		loadGlobal = new _loadGlobal.ptr();
 		pop = new _pop.ptr();
 		get = new _get.ptr();
@@ -34356,6 +34914,7 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		gt = new _gt.ptr();
 		gte = new _gte.ptr();
 		call = new _call.ptr();
+		ret = new _ret.ptr();
 		_EmptyFunction = FunctionFunc((function(param) {
 			var param;
 			return new $pkg.Null.constructor.elem($pkg.Null);
