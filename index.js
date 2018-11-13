@@ -12,6 +12,12 @@
       `;
     }
 
+    set loading(value) {
+      [...this.element.querySelectorAll('button')].forEach(button => {
+        button.disabled = value;
+      })
+    }
+
     get run() {
       return () => {
         this.element.dispatchEvent(new CustomEvent('run', { bubbles: true }));
@@ -78,6 +84,10 @@
       `;
     }
 
+    set loading(value) {
+      this.element.classList[value ? 'add' : 'remove']('loading');
+    }
+
     update(result) {
       this.element.textContent = result;
     }
@@ -92,6 +102,10 @@
           flex: 1;
           min-height: 0;
           padding: 10px;
+
+          &.loading {
+            opacity: 0.4;
+          }
         }
       `;
     }
@@ -105,9 +119,9 @@
     get template() {
       return `
         <div on-run="{run}">
-          <jkl-header></jkl-header>
-          <jkl-editor ref="editor"></jkl-editor>
-          <jkl-result ref="result"></jkl-result>
+          <jkl-header loading="{loading}"></jkl-header>
+          <jkl-editor ref="editor" loading="{loading}"></jkl-editor>
+          <jkl-result ref="result" loading="{loading}"></jkl-result>
         </div>
       `;
     }
@@ -119,11 +133,14 @@
           this.editor.value = code;
         }
         const code = this.editor.value;
+        this.loading = true;
         try {
           const { result } = await gates.run.post({ body: { code } });
           this.result.update(result);
         } catch (error) {
           this.result.updateError(error.message);
+        } finally {
+          this.loading = false;
         }
       };
     }
