@@ -31914,7 +31914,7 @@ $packages["github.com/lujjjh/gates/syntax"] = (function() {
 	return $pkg;
 })();
 $packages["github.com/lujjjh/gates"] = (function() {
-	var $pkg = {}, $init, fmt, syntax, math, reflect, strconv, strings, utf8, Array, Bool, compiler, Function, FunctionCall, functionCall, nativeFunction, literalFunction, Global, Map, _Null, Int, Float, Number, getter, Program, Ref, Runtime, scope, _String, Value, valueStack, vm, instruction, _halt, load, _loadNull, _loadGlobal, loadStack, storeStack, loadLocal, _pop, newArray, newMap, newFunc, _get, jmp1, jeq1, jneq1, _plus, _neg, _not, _add, _sub, _mul, _div, _mod, _and, _or, _xor, _shl, _shr, _eq, _neq, _lt, _lte, _gt, _gte, _call, _ret, ptrType, ptrType$1, sliceType, sliceType$1, sliceType$2, ptrType$2, ptrType$3, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, ptrType$9, ptrType$10, ptrType$11, ptrType$12, ptrType$13, ptrType$14, funcType, mapType, mapType$1, ptrType$15, sliceType$3, ptrType$16, ptrType$17, ptrType$18, sliceType$4, ptrType$19, ptrType$20, mapType$2, ptrType$21, sharedRuntime, _EmptyFunction, halt, loadNull, loadGlobal, pop, get, plus, neg, not, add, sub, mul, div, mod, and, or, xor, shl, shr, eq, neq, lt, lte, gt, gte, call, ret, builtInBool, builtInInt, builtInNumber, builtInString, FunctionFunc, NewGlobal, objectGet, ref, unref, Compile, New, newScope, String, less;
+	var $pkg = {}, $init, fmt, syntax, math, reflect, strconv, strings, utf8, Array, Bool, compiler, Function, FunctionCall, functionCall, nativeFunction, literalFunction, Global, Map, _Null, Int, Float, Number, getter, Program, Ref, Runtime, scope, _String, Value, valueStack, stash, vm, instruction, _halt, load, _loadNull, _loadGlobal, loadStack, loadLocal, storeLocal, _pop, newArray, newMap, newFunc, _get, jmp1, jeq1, jneq1, _plus, _neg, _not, _add, _sub, _mul, _div, _mod, _and, _or, _xor, _shl, _shr, _eq, _neq, _lt, _lte, _gt, _gte, _call, _ret, ptrType, ptrType$1, sliceType, sliceType$1, sliceType$2, ptrType$2, ptrType$3, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, ptrType$9, ptrType$10, ptrType$11, ptrType$12, ptrType$13, ptrType$14, funcType, mapType, mapType$1, ptrType$15, sliceType$3, ptrType$16, ptrType$17, sliceType$4, ptrType$18, ptrType$19, sliceType$5, ptrType$20, ptrType$21, mapType$2, ptrType$22, sharedRuntime, _EmptyFunction, halt, loadNull, loadGlobal, pop, get, plus, neg, not, add, sub, mul, div, mod, and, or, xor, shl, shr, eq, neq, lt, lte, gt, gte, call, ret, builtInBool, builtInInt, builtInNumber, builtInString, FunctionFunc, NewGlobal, objectGet, ref, unref, Compile, New, newScope, String, less;
 	fmt = $packages["fmt"];
 	syntax = $packages["github.com/lujjjh/gates/syntax"];
 	math = $packages["math"];
@@ -31952,15 +31952,17 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		}
 		this.fun = fun_;
 	});
-	literalFunction = $pkg.literalFunction = $newType(0, $kindStruct, "gates.literalFunction", true, "github.com/lujjjh/gates", false, function(pc_, stackSize_) {
+	literalFunction = $pkg.literalFunction = $newType(0, $kindStruct, "gates.literalFunction", true, "github.com/lujjjh/gates", false, function(pc_, stackSize_, stash_) {
 		this.$val = this;
 		if (arguments.length === 0) {
 			this.pc = 0;
 			this.stackSize = 0;
+			this.stash = ptrType$17.nil;
 			return;
 		}
 		this.pc = pc_;
 		this.stackSize = stackSize_;
+		this.stash = stash_;
 	});
 	Global = $pkg.Global = $newType(0, $kindStruct, "gates.Global", true, "github.com/lujjjh/gates", true, function(m_) {
 		this.$val = this;
@@ -32038,13 +32040,27 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		this.l = l_;
 		this.sp = sp_;
 	});
-	vm = $pkg.vm = $newType(0, $kindStruct, "gates.vm", true, "github.com/lujjjh/gates", false, function(r_, halt_, pc_, stack_, bp_, program_) {
+	stash = $pkg.stash = $newType(0, $kindStruct, "gates.stash", true, "github.com/lujjjh/gates", false, function(values_, names_, outer_) {
+		this.$val = this;
+		if (arguments.length === 0) {
+			this.values = new valueStack.ptr(sliceType$3.nil, 0);
+			this.names = false;
+			this.outer = ptrType$17.nil;
+			return;
+		}
+		this.values = values_;
+		this.names = names_;
+		this.outer = outer_;
+	});
+	vm = $pkg.vm = $newType(0, $kindStruct, "gates.vm", true, "github.com/lujjjh/gates", false, function(r_, halt_, pc_, stack_, stash_, callStack_, bp_, program_) {
 		this.$val = this;
 		if (arguments.length === 0) {
 			this.r = ptrType$16.nil;
 			this.halt = false;
 			this.pc = 0;
 			this.stack = new valueStack.ptr(sliceType$3.nil, 0);
+			this.stash = ptrType$17.nil;
+			this.callStack = sliceType$4.nil;
 			this.bp = 0;
 			this.program = ptrType$15.nil;
 			return;
@@ -32053,6 +32069,8 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		this.halt = halt_;
 		this.pc = pc_;
 		this.stack = stack_;
+		this.stash = stash_;
+		this.callStack = callStack_;
 		this.bp = bp_;
 		this.program = program_;
 	});
@@ -32077,8 +32095,8 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		}
 	});
 	loadStack = $pkg.loadStack = $newType(4, $kindInt, "gates.loadStack", true, "github.com/lujjjh/gates", false, null);
-	storeStack = $pkg.storeStack = $newType(4, $kindUint32, "gates.storeStack", true, "github.com/lujjjh/gates", false, null);
 	loadLocal = $pkg.loadLocal = $newType(4, $kindUint32, "gates.loadLocal", true, "github.com/lujjjh/gates", false, null);
+	storeLocal = $pkg.storeLocal = $newType(4, $kindUint32, "gates.storeLocal", true, "github.com/lujjjh/gates", false, null);
 	_pop = $pkg._pop = $newType(0, $kindStruct, "gates._pop", true, "github.com/lujjjh/gates", false, function() {
 		this.$val = this;
 		if (arguments.length === 0) {
@@ -32247,13 +32265,15 @@ $packages["github.com/lujjjh/gates"] = (function() {
 	ptrType$15 = $ptrType(Program);
 	sliceType$3 = $sliceType(Value);
 	ptrType$16 = $ptrType(Runtime);
-	ptrType$17 = $ptrType(nativeFunction);
-	ptrType$18 = $ptrType(literalFunction);
-	sliceType$4 = $sliceType(syntax.Expr);
-	ptrType$19 = $ptrType(compiler);
-	ptrType$20 = $ptrType(functionCall);
+	ptrType$17 = $ptrType(stash);
+	sliceType$4 = $sliceType(ptrType$17);
+	ptrType$18 = $ptrType(nativeFunction);
+	ptrType$19 = $ptrType(literalFunction);
+	sliceType$5 = $sliceType(syntax.Expr);
+	ptrType$20 = $ptrType(compiler);
+	ptrType$21 = $ptrType(functionCall);
 	mapType$2 = $mapType($String, $Uint32);
-	ptrType$21 = $ptrType(valueStack);
+	ptrType$22 = $ptrType(valueStack);
 	Array.prototype.IsString = function() {
 		return false;
 	};
@@ -32694,7 +32714,7 @@ $packages["github.com/lujjjh/gates"] = (function() {
 			i = _i;
 			ident = ((_i < 0 || _i >= _ref.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref.$array[_ref.$offset + _i]);
 			idx = c.scope.bindName(ident.Name);
-			c.emit(new sliceType$2([new loadStack(((-((i + 1 >> 0)) >> 0))), new storeStack(((idx >>> 0)))]));
+			c.emit(new sliceType$2([new loadStack(((-((i + 1 >> 0)) >> 0))), new storeLocal(((idx >>> 0)))]));
 			_i++;
 		}
 		_ref$1 = e.Body.StmtList;
@@ -33747,7 +33767,7 @@ $packages["github.com/lujjjh/gates"] = (function() {
 	Runtime.ptr.prototype.init = function() {
 		var r;
 		r = this;
-		r.vm = new vm.ptr(r, false, 0, new valueStack.ptr(sliceType$3.nil, 0), 0, ptrType$15.nil);
+		r.vm = new vm.ptr(r, false, 0, new valueStack.ptr(sliceType$3.nil, 0), ptrType$17.nil, sliceType$4.nil, 0, ptrType$15.nil);
 		r.vm.init();
 		r.global = NewGlobal();
 	};
@@ -34137,6 +34157,28 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		return values;
 	};
 	valueStack.prototype.PopN = function(n) { return this.$val.PopN(n); };
+	stash.ptr.prototype.putByIdx = function(idx, v) {
+		var idx, s, v, x;
+		s = this;
+		s.values.expand(((idx >> 0)));
+		(x = s.values.l, ((idx < 0 || idx >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + idx] = v));
+	};
+	stash.prototype.putByIdx = function(idx, v) { return this.$val.putByIdx(idx, v); };
+	stash.ptr.prototype.getByIdx = function(idx) {
+		var idx, s, x;
+		s = this;
+		if (((idx >> 0)) < s.values.l.$length) {
+			return (x = s.values.l, ((idx < 0 || idx >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + idx]));
+		}
+		return new $pkg.Null.constructor.elem($pkg.Null);
+	};
+	stash.prototype.getByIdx = function(idx) { return this.$val.getByIdx(idx); };
+	vm.ptr.prototype.newStash = function() {
+		var vm$1;
+		vm$1 = this;
+		vm$1.stash = new stash.ptr(new valueStack.ptr(sliceType$3.nil, 0), false, vm$1.stash);
+	};
+	vm.prototype.newStash = function() { return this.$val.newStash(); };
 	vm.ptr.prototype.init = function() {
 		var vm$1;
 		vm$1 = this;
@@ -34156,6 +34198,20 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: vm.ptr.prototype.run }; } $f.vm$1 = vm$1; $f.x = x; $f.x$1 = x$1; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	vm.prototype.run = function() { return this.$val.run(); };
+	vm.ptr.prototype.pushCtx = function() {
+		var vm$1;
+		vm$1 = this;
+		vm$1.callStack = $append(vm$1.callStack, vm$1.stash);
+	};
+	vm.prototype.pushCtx = function() { return this.$val.pushCtx(); };
+	vm.ptr.prototype.popCtx = function() {
+		var l, vm$1, x;
+		vm$1 = this;
+		l = vm$1.callStack.$length - 1 >> 0;
+		vm$1.stash = (x = vm$1.callStack, ((l < 0 || l >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + l]));
+		vm$1.callStack = $subslice(vm$1.callStack, 0, l);
+	};
+	vm.prototype.popCtx = function() { return this.$val.popCtx(); };
 	_halt.ptr.prototype.exec = function(vm$1) {
 		var vm$1;
 		vm$1.halt = true;
@@ -34207,34 +34263,37 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: loadStack.prototype.exec }; } $f._r = _r; $f.argc = argc; $f.argn = argn; $f.bp = bp; $f.idx = idx; $f.l = l; $f.vm$1 = vm$1; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.x$3 = x$3; $f.x$4 = x$4; $f.x$5 = x$5; $f.x$6 = x$6; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$ptrType(loadStack).prototype.exec = function(vm$1) { return new loadStack(this.$get()).exec(vm$1); };
-	storeStack.prototype.exec = function(vm$1) {
-		var bp, idx, s, vm$1, x, x$1;
-		s = this.$val;
-		idx = ((s >> 0));
-		bp = vm$1.bp;
-		(x = vm$1.stack.l, x$1 = bp + idx >> 0, ((x$1 < 0 || x$1 >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + x$1] = vm$1.stack.Pop()));
-		vm$1.pc = vm$1.pc + (1) >> 0;
-	};
-	$ptrType(storeStack).prototype.exec = function(vm$1) { return new storeStack(this.$get()).exec(vm$1); };
 	loadLocal.prototype.exec = function(vm$1) {
-		var _r, bp, idx, l, level, vm$1, x, x$1, x$2, x$3, x$4, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; bp = $f.bp; idx = $f.idx; l = $f.l; level = $f.level; vm$1 = $f.vm$1; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; x$3 = $f.x$3; x$4 = $f.x$4; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var idx, l, level, stash$1, vm$1;
 		l = this.$val;
 		level = l >>> 24 >>> 0;
-		idx = ((((l & 16777215) >>> 0) >> 0));
-		bp = vm$1.bp;
-		/* while (true) { */ case 1:
-			/* if (!(level > 0)) { break; } */ if(!(level > 0)) { $s = 2; continue; }
-			_r = (x$1 = vm$1.stack.l, x$2 = bp - 2 >> 0, ((x$2 < 0 || x$2 >= x$1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$1.$array[x$1.$offset + x$2])).ToInt(); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-			bp = (((x = _r, x.$low + ((x.$high >> 31) * 4294967296)) >> 0));
+		idx = ((((l & 16777215) >>> 0) >>> 0));
+		stash$1 = vm$1.stash;
+		while (true) {
+			if (!(level > 0)) { break; }
+			stash$1 = stash$1.outer;
 			level = level - (1) >>> 0;
-		/* } */ $s = 1; continue; case 2:
-		vm$1.stack.Push((x$3 = vm$1.stack.l, x$4 = bp + idx >> 0, ((x$4 < 0 || x$4 >= x$3.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$3.$array[x$3.$offset + x$4])));
+		}
+		vm$1.stack.Push(stash$1.getByIdx(idx));
 		vm$1.pc = vm$1.pc + (1) >> 0;
-		$s = -1; return;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: loadLocal.prototype.exec }; } $f._r = _r; $f.bp = bp; $f.idx = idx; $f.l = l; $f.level = level; $f.vm$1 = vm$1; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.x$3 = x$3; $f.x$4 = x$4; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$ptrType(loadLocal).prototype.exec = function(vm$1) { return new loadLocal(this.$get()).exec(vm$1); };
+	storeLocal.prototype.exec = function(vm$1) {
+		var idx, level, s, stash$1, v, vm$1;
+		s = this.$val;
+		v = vm$1.stack.Pop();
+		level = s >>> 24 >>> 0;
+		idx = ((((s & 16777215) >>> 0) >>> 0));
+		stash$1 = vm$1.stash;
+		while (true) {
+			if (!(level > 0)) { break; }
+			stash$1 = stash$1.outer;
+			level = level - (1) >>> 0;
+		}
+		stash$1.putByIdx(idx, v);
+		vm$1.pc = vm$1.pc + (1) >> 0;
+	};
+	$ptrType(storeLocal).prototype.exec = function(vm$1) { return new storeLocal(this.$get()).exec(vm$1); };
 	_pop.ptr.prototype.exec = function(vm$1) {
 		var vm$1;
 		vm$1.stack.Pop();
@@ -34277,7 +34336,7 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		l = this.$val;
 		pc = ((((l & 16777215) >>> 0) >> 0));
 		stackSize = (((l >>> 24 >>> 0) >> 0));
-		f = new literalFunction.ptr(pc, stackSize);
+		f = new literalFunction.ptr(pc, stackSize, vm$1.stash);
 		vm$1.stack.Push(f);
 		vm$1.pc = vm$1.pc + (1) >> 0;
 	};
@@ -34713,10 +34772,10 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		_r = vm$1.stack.Pop().ToFunction(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		fun = _r;
 		_ref = fun;
-		/* */ if ($assertType(_ref, ptrType$17, true)[1]) { $s = 2; continue; }
-		/* */ if ($assertType(_ref, ptrType$18, true)[1]) { $s = 3; continue; }
+		/* */ if ($assertType(_ref, ptrType$18, true)[1]) { $s = 2; continue; }
+		/* */ if ($assertType(_ref, ptrType$19, true)[1]) { $s = 3; continue; }
 		/* */ $s = 4; continue;
-		/* if ($assertType(_ref, ptrType$17, true)[1]) { */ case 2:
+		/* if ($assertType(_ref, ptrType$18, true)[1]) { */ case 2:
 			f = _ref.$val;
 			_r$1 = vm$1.stack.Pop().ToInt(); /* */ $s = 6; case 6: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 			argc = _r$1;
@@ -34732,7 +34791,7 @@ $packages["github.com/lujjjh/gates"] = (function() {
 			$r = vm$1.stack.Push(_r$2); /* */ $s = 8; case 8: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 			vm$1.pc = vm$1.pc + (1) >> 0;
 			$s = 5; continue;
-		/* } else if ($assertType(_ref, ptrType$18, true)[1]) { */ case 3:
+		/* } else if ($assertType(_ref, ptrType$19, true)[1]) { */ case 3:
 			f$1 = _ref.$val;
 			bp = vm$1.bp;
 			pc = vm$1.pc;
@@ -34745,7 +34804,10 @@ $packages["github.com/lujjjh/gates"] = (function() {
 				vm$1.stack.Push(new $pkg.Null.constructor.elem($pkg.Null));
 				i$1 = i$1 + (1) >> 0;
 			}
+			vm$1.pushCtx();
+			vm$1.stash = f$1.stash;
 			vm$1.pc = f$1.pc;
+			vm$1.newStash();
 			$s = 5; continue;
 		/* } else { */ case 4:
 			f$2 = _ref;
@@ -34772,16 +34834,17 @@ $packages["github.com/lujjjh/gates"] = (function() {
 		vm$1.pc = pc;
 		vm$1.bp = bp;
 		vm$1.pc = vm$1.pc + (1) >> 0;
+		vm$1.popCtx();
 		$s = -1; return;
 		/* */ } return; } if ($f === undefined) { $f = { $blk: _ret.ptr.prototype.exec }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f.argc = argc; $f.bp = bp; $f.pc = pc; $f.returnValue = returnValue; $f.vm$1 = vm$1; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.x$3 = x$3; $f.x$4 = x$4; $f.x$5 = x$5; $f.x$6 = x$6; $f.x$7 = x$7; $f.x$8 = x$8; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	_ret.prototype.exec = function(vm$1) { return this.$val.exec(vm$1); };
 	Array.methods = [{prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "Get", name: "Get", pkg: "", typ: $funcType([ptrType$16, Value], [Value], false)}];
 	Bool.methods = [{prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}];
-	ptrType$19.methods = [{prop: "emit", name: "emit", pkg: "github.com/lujjjh/gates", typ: $funcType([sliceType$2], [], true)}, {prop: "compileReturnStmt", name: "compileReturnStmt", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$2], [], false)}, {prop: "compileStmt", name: "compileStmt", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Stmt], [], false)}, {prop: "compileIdent", name: "compileIdent", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$4], [], false)}, {prop: "compileLit", name: "compileLit", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$5], [], false)}, {prop: "compileArrayLit", name: "compileArrayLit", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$6], [], false)}, {prop: "compileMapLit", name: "compileMapLit", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$7], [], false)}, {prop: "compileFunctionLit", name: "compileFunctionLit", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$8], [], false)}, {prop: "compileUnaryExpr", name: "compileUnaryExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$9], [], false)}, {prop: "compileBinaryExpr", name: "compileBinaryExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$10], [], false)}, {prop: "compileSelectorExpr", name: "compileSelectorExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Expr, Value], [], false)}, {prop: "compileIndexExpr", name: "compileIndexExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Expr, syntax.Expr], [], false)}, {prop: "compileCallExpr", name: "compileCallExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Expr, sliceType$4], [], false)}, {prop: "compileExpr", name: "compileExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Expr], [], false)}, {prop: "compile", name: "compile", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Expr], [], false)}];
-	ptrType$20.methods = [{prop: "Args", name: "Args", pkg: "", typ: $funcType([], [sliceType$3], false)}];
-	ptrType$17.methods = [{prop: "function$", name: "function", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}, {prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}];
+	ptrType$20.methods = [{prop: "emit", name: "emit", pkg: "github.com/lujjjh/gates", typ: $funcType([sliceType$2], [], true)}, {prop: "compileReturnStmt", name: "compileReturnStmt", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$2], [], false)}, {prop: "compileStmt", name: "compileStmt", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Stmt], [], false)}, {prop: "compileIdent", name: "compileIdent", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$4], [], false)}, {prop: "compileLit", name: "compileLit", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$5], [], false)}, {prop: "compileArrayLit", name: "compileArrayLit", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$6], [], false)}, {prop: "compileMapLit", name: "compileMapLit", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$7], [], false)}, {prop: "compileFunctionLit", name: "compileFunctionLit", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$8], [], false)}, {prop: "compileUnaryExpr", name: "compileUnaryExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$9], [], false)}, {prop: "compileBinaryExpr", name: "compileBinaryExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$10], [], false)}, {prop: "compileSelectorExpr", name: "compileSelectorExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Expr, Value], [], false)}, {prop: "compileIndexExpr", name: "compileIndexExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Expr, syntax.Expr], [], false)}, {prop: "compileCallExpr", name: "compileCallExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Expr, sliceType$5], [], false)}, {prop: "compileExpr", name: "compileExpr", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Expr], [], false)}, {prop: "compile", name: "compile", pkg: "github.com/lujjjh/gates", typ: $funcType([syntax.Expr], [], false)}];
+	ptrType$21.methods = [{prop: "Args", name: "Args", pkg: "", typ: $funcType([], [sliceType$3], false)}];
 	ptrType$18.methods = [{prop: "function$", name: "function", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}, {prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}];
+	ptrType$19.methods = [{prop: "function$", name: "function", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}, {prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}];
 	ptrType$1.methods = [{prop: "Set", name: "Set", pkg: "", typ: $funcType([$String, Value], [], false)}, {prop: "Get", name: "Get", pkg: "", typ: $funcType([$String], [Value], false)}, {prop: "InitBuiltIns", name: "InitBuiltIns", pkg: "", typ: $funcType([], [], false)}];
 	Map.methods = [{prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "Get", name: "Get", pkg: "", typ: $funcType([ptrType$16, Value], [Value], false)}];
 	_Null.methods = [{prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}];
@@ -34792,15 +34855,16 @@ $packages["github.com/lujjjh/gates"] = (function() {
 	ptrType$16.methods = [{prop: "init", name: "init", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}, {prop: "Global", name: "Global", pkg: "", typ: $funcType([], [ptrType$1], false)}, {prop: "Reset", name: "Reset", pkg: "", typ: $funcType([], [], false)}, {prop: "RunProgram", name: "RunProgram", pkg: "", typ: $funcType([ptrType$15], [Value], false)}, {prop: "RunString", name: "RunString", pkg: "", typ: $funcType([$String], [Value, $error], false)}, {prop: "ToValue", name: "ToValue", pkg: "", typ: $funcType([$emptyInterface], [Value], false)}];
 	ptrType$3.methods = [{prop: "init", name: "init", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType$3], [], false)}, {prop: "lookupName", name: "lookupName", pkg: "github.com/lujjjh/gates", typ: $funcType([$String], [$Uint32, $Bool], false)}, {prop: "bindName", name: "bindName", pkg: "github.com/lujjjh/gates", typ: $funcType([$String], [$Uint32], false)}];
 	_String.methods = [{prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "Get", name: "Get", pkg: "", typ: $funcType([ptrType$16, Value], [Value], false)}];
-	ptrType$21.methods = [{prop: "init", name: "init", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}, {prop: "expand", name: "expand", pkg: "github.com/lujjjh/gates", typ: $funcType([$Int], [], false)}, {prop: "Push", name: "Push", pkg: "", typ: $funcType([Value], [], false)}, {prop: "Peek", name: "Peek", pkg: "", typ: $funcType([], [Value], false)}, {prop: "Pop", name: "Pop", pkg: "", typ: $funcType([], [Value], false)}, {prop: "PopN", name: "PopN", pkg: "", typ: $funcType([$Int], [sliceType$3], false)}];
-	ptrType.methods = [{prop: "init", name: "init", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}, {prop: "run", name: "run", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}];
+	ptrType$22.methods = [{prop: "init", name: "init", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}, {prop: "expand", name: "expand", pkg: "github.com/lujjjh/gates", typ: $funcType([$Int], [], false)}, {prop: "Push", name: "Push", pkg: "", typ: $funcType([Value], [], false)}, {prop: "Peek", name: "Peek", pkg: "", typ: $funcType([], [Value], false)}, {prop: "Pop", name: "Pop", pkg: "", typ: $funcType([], [Value], false)}, {prop: "PopN", name: "PopN", pkg: "", typ: $funcType([$Int], [sliceType$3], false)}];
+	ptrType$17.methods = [{prop: "putByName", name: "putByName", pkg: "github.com/lujjjh/gates", typ: $funcType([$String, Value], [$Bool], false)}, {prop: "putByIdx", name: "putByIdx", pkg: "github.com/lujjjh/gates", typ: $funcType([$Uint32, Value], [], false)}, {prop: "getByName", name: "getByName", pkg: "github.com/lujjjh/gates", typ: $funcType([$String], [Value, $Bool], false)}, {prop: "getByIdx", name: "getByIdx", pkg: "github.com/lujjjh/gates", typ: $funcType([$Uint32], [Value], false)}];
+	ptrType.methods = [{prop: "newStash", name: "newStash", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}, {prop: "init", name: "init", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}, {prop: "run", name: "run", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}, {prop: "pushCtx", name: "pushCtx", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}, {prop: "popCtx", name: "popCtx", pkg: "github.com/lujjjh/gates", typ: $funcType([], [], false)}];
 	_halt.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
 	load.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
 	_loadNull.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
 	_loadGlobal.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
 	loadStack.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
-	storeStack.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
 	loadLocal.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
+	storeLocal.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
 	_pop.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
 	newArray.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
 	newMap.methods = [{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}];
@@ -34836,7 +34900,7 @@ $packages["github.com/lujjjh/gates"] = (function() {
 	FunctionCall.init([{prop: "Args", name: "Args", pkg: "", typ: $funcType([], [sliceType$3], false)}]);
 	functionCall.init("github.com/lujjjh/gates", [{prop: "args", name: "args", embedded: false, exported: false, typ: sliceType$3, tag: ""}]);
 	nativeFunction.init("github.com/lujjjh/gates", [{prop: "fun", name: "fun", embedded: false, exported: false, typ: funcType, tag: ""}]);
-	literalFunction.init("github.com/lujjjh/gates", [{prop: "pc", name: "pc", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "stackSize", name: "stackSize", embedded: false, exported: false, typ: $Int, tag: ""}]);
+	literalFunction.init("github.com/lujjjh/gates", [{prop: "pc", name: "pc", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "stackSize", name: "stackSize", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "stash", name: "stash", embedded: false, exported: false, typ: ptrType$17, tag: ""}]);
 	Global.init("github.com/lujjjh/gates", [{prop: "m", name: "m", embedded: false, exported: false, typ: Map, tag: ""}]);
 	Map.init($String, Value);
 	_Null.init("", []);
@@ -34849,7 +34913,8 @@ $packages["github.com/lujjjh/gates"] = (function() {
 	_String.init("github.com/lujjjh/gates", [{prop: "s", name: "s", embedded: false, exported: false, typ: $String, tag: ""}]);
 	Value.init([{prop: "Equals", name: "Equals", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "IsBool", name: "IsBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFloat", name: "IsFloat", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsFunction", name: "IsFunction", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsInt", name: "IsInt", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "IsString", name: "IsString", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "SameAs", name: "SameAs", pkg: "", typ: $funcType([Value], [$Bool], false)}, {prop: "ToBool", name: "ToBool", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "ToFloat", name: "ToFloat", pkg: "", typ: $funcType([], [$Float64], false)}, {prop: "ToFunction", name: "ToFunction", pkg: "", typ: $funcType([], [Function], false)}, {prop: "ToInt", name: "ToInt", pkg: "", typ: $funcType([], [$Int64], false)}, {prop: "ToNative", name: "ToNative", pkg: "", typ: $funcType([], [$emptyInterface], false)}, {prop: "ToNumber", name: "ToNumber", pkg: "", typ: $funcType([], [Number], false)}, {prop: "ToString", name: "ToString", pkg: "", typ: $funcType([], [$String], false)}]);
 	valueStack.init("github.com/lujjjh/gates", [{prop: "l", name: "l", embedded: false, exported: false, typ: sliceType$3, tag: ""}, {prop: "sp", name: "sp", embedded: false, exported: false, typ: $Int, tag: ""}]);
-	vm.init("github.com/lujjjh/gates", [{prop: "r", name: "r", embedded: false, exported: false, typ: ptrType$16, tag: ""}, {prop: "halt", name: "halt", embedded: false, exported: false, typ: $Bool, tag: ""}, {prop: "pc", name: "pc", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "stack", name: "stack", embedded: false, exported: false, typ: valueStack, tag: ""}, {prop: "bp", name: "bp", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "program", name: "program", embedded: false, exported: false, typ: ptrType$15, tag: ""}]);
+	stash.init("github.com/lujjjh/gates", [{prop: "values", name: "values", embedded: false, exported: false, typ: valueStack, tag: ""}, {prop: "names", name: "names", embedded: false, exported: false, typ: mapType$2, tag: ""}, {prop: "outer", name: "outer", embedded: false, exported: false, typ: ptrType$17, tag: ""}]);
+	vm.init("github.com/lujjjh/gates", [{prop: "r", name: "r", embedded: false, exported: false, typ: ptrType$16, tag: ""}, {prop: "halt", name: "halt", embedded: false, exported: false, typ: $Bool, tag: ""}, {prop: "pc", name: "pc", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "stack", name: "stack", embedded: false, exported: false, typ: valueStack, tag: ""}, {prop: "stash", name: "stash", embedded: false, exported: false, typ: ptrType$17, tag: ""}, {prop: "callStack", name: "callStack", embedded: false, exported: false, typ: sliceType$4, tag: ""}, {prop: "bp", name: "bp", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "program", name: "program", embedded: false, exported: false, typ: ptrType$15, tag: ""}]);
 	instruction.init([{prop: "exec", name: "exec", pkg: "github.com/lujjjh/gates", typ: $funcType([ptrType], [], false)}]);
 	_halt.init("", []);
 	_loadNull.init("", []);
