@@ -1,11 +1,4 @@
-REPO = github.com/lujjjh/gates-playground
+server:
+	GOOS=linux GOARCH=amd64 go build -o gates-server ./server
 
-build:
-	gopherjs build $(REPO)
-
-.PHONY: build
-
-run:
-	gopherjs serve $(REPO)
-
-.PHONY: run
+.PHONY: server
