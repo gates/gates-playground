@@ -44,7 +44,7 @@ func runString(s string) (gates.Value, error) {
 
 func main() {
 	http.HandleFunc("/run", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Contol-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
 		switch r.Method {
 		case http.MethodOptions:
@@ -56,10 +56,12 @@ func main() {
 				return
 			}
 
+			w.Header().Set("Content-Type", "application/json")
 			enc := json.NewEncoder(w)
 			code := payload.Code
 			v, err := runString(code)
 			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
 				enc.Encode(&errResp{Message: err.Error()})
 				return
 			}
