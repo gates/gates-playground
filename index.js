@@ -27,7 +27,10 @@
     get runFib() {
       const code = `(function () {
   let fib = function (n) {
-    return n <= 1 && 1 || fib(n - 2) + fib(n - 1);
+    if (n <= 1) {
+      return 1;
+    }
+    return fib(n - 2) + fib(n - 1);
   };
   return fib;
 })()(10)

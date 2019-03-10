@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/lujjjh/gates"
+	"github.com/gates/gates"
 )
 
 type runReq struct {
@@ -21,18 +21,8 @@ type errResp struct {
 	Message string `json:"message"`
 }
 
-func _timestamp(fc gates.FunctionCall) gates.Value {
-	return gates.Int(time.Now().Unix())
-}
-
-func registerGlobal(r *gates.Runtime) {
-	r.Global().InitBuiltIns()
-	r.Global().Set("timestamp", gates.FunctionFunc(_timestamp))
-}
-
 func runString(s string) (gates.Value, error) {
 	r := gates.New()
-	registerGlobal(r)
 	program, err := gates.Compile(s)
 	if err != nil {
 		return nil, err
